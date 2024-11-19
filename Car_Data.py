@@ -3,7 +3,7 @@ import pandas as pd
 from streamlit_echarts import st_echarts
 
 # Text Element
-st.title("Cars Dataset 🏎️")
+st.title("Project StarX 🏎️")
 st.header("By : ") # It is smaller than Title
 st.subheader("Bhatti, Muhammad Ahtisham and Love") # It is smaller than Header
 st.text("Different datas for different cars ")
