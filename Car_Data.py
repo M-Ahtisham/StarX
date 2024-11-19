@@ -1,15 +1,21 @@
 import streamlit as st
 import pandas as pd
 from streamlit_echarts import st_echarts
+from PIL import Image
+
 
 # Text Element
 st.title("Project StarX 🏎️")
+
+
 st.header("By : ") # It is smaller than Title
 st.subheader("Bhatti, Muhammad Ahtisham and Love") # It is smaller than Header
-st.text("Different datas for different cars ")
-st.write("* We are using Name, Label,Location,price etc as our dataset ")
+st.error("Different datas for different cars in India")
+st.info("* We are using Name, Label,Location,price etc as our dataset ")
+img =Image.open("demopic.jpg")
+st.image(img)
 st.divider()
-# sliding_val = st.slider("This is a slider",0,100,(50))
+sliding_val = st.slider("This is a slider",0,100,(50))
 
 df = pd.read_csv("data/Quikr_car.csv",)
 st.dataframe(df)
