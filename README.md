@@ -2,7 +2,7 @@ Bhatti, Muhammad Ahtisham, 22301502
 
 -, Love, 12306406
 
-**QuantumCurve**
+**StarX** 
 
 [MyGit Repository](https://mygit.th-deg.de/mb04502/QuantumCurve)
 
