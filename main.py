@@ -20,5 +20,5 @@ st.line_chart(df, x = "Kms_driven", y ="Price")
 # Dataset downloaded from
 # https://calmcode.io/datasets/bigmac
 
-cars = pd.read_csv("/Users/ahtisham/Desktop/Projects/Assistance Systems/QuantumCurve/data/Quikr_car.csv")
+
 
