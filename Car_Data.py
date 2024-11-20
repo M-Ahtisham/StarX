@@ -2,15 +2,20 @@ import streamlit as st
 import pandas as pd
 from streamlit_echarts import st_echarts
 from PIL import Image
+import numpy as np 
+import time
 
+
+
+#spinner 
+with st.spinner("waiting.."):
+    time.sleep(2)
+st.success("Welcome to ")
 
 # Text Element
 st.title("Project StarX 🏎️")
-
-
 st.header("By : ") # It is smaller than Title
-st.subheader("Bhatti, Muhammad Ahtisham and Love") # It is smaller than Header
-st.success("Different datas for different cars in India")
+st.subheader(" Muhammad Ahtisham and Love") # It is smaller than Header
 st.info("* We are using Name, Label,Location,price etc as our dataset ")
 img =Image.open("demopic.jpg")
 st.image(img)
