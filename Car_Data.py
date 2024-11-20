@@ -10,7 +10,7 @@ st.title("Project StarX 🏎️")
 
 st.header("By : ") # It is smaller than Title
 st.subheader("Bhatti, Muhammad Ahtisham and Love") # It is smaller than Header
-st.error("Different datas for different cars in India")
+st.success("Different datas for different cars in India")
 st.info("* We are using Name, Label,Location,price etc as our dataset ")
 img =Image.open("demopic.jpg")
 st.image(img)
