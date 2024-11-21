@@ -7,10 +7,12 @@ import time
 
 
 
+
 #spinner 
 with st.spinner("waiting.."):
     time.sleep(2)
 st.success("Welcome to ")
+st.balloons()
 
 # Text Element
 st.title("Project StarX 🏎️")
@@ -22,7 +24,7 @@ st.image(img)
 st.divider()
 sliding_val = st.slider("This is a slider",0,100,(50))
 
-df = pd.read_csv("data/Quikr_car.csv",)
+df = pd.read_csv('data/Quikr_car.csv')
 st.dataframe(df)
 st.write("Drawing a graph of the original data sat without any changes")
 st.line_chart(df, x = "Kms_driven", y ="Price")
