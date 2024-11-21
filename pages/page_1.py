@@ -26,7 +26,7 @@ with col1:
     st.plotly_chart(fig,use_container_width=True)
 
 with col2:
-      fig1 = px.line(df, x="Kms_driven", y= "Year", labels = {"Year": "Km driven per year"},
+      fig1 = px.scatter(df, x="Kms_driven", y= "Year", labels = {"Year": "Km driven per year"},
                 title= "Yearly Driven data", hover_data=["Kms_driven"],
                 template="gridon", height =500 )
       st.plotly_chart(fig1,use_container_width=True)
