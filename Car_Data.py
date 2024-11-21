@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from streamlit_echarts import st_echarts
+# from streamlit_echarts import st_echarts
 from PIL import Image
 import numpy as np 
 import time
@@ -28,7 +28,7 @@ df = pd.read_csv('data/Quikr_car.csv')
 st.dataframe(df)
 st.write("Drawing a graph of the original data sat without any changes")
 st.line_chart(df, x = "Kms_driven", y ="Price")
-st.echarts(df, x = "Kms_driven", y ="Price")
+# st.echarts(df, x = "Kms_driven", y ="Price")
 
 
 
