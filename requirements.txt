@@ -1,3 +1,5 @@
 streamlit
 pandas
-kaggle
+plotly
+scikit-learn
+rasa
