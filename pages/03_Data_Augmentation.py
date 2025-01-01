@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 
+st.header("Fake Data")
+
 df_cleaned = st.session_state.df_c
 
 def generate_fake_row():
@@ -19,7 +21,7 @@ def generate_fake_row():
     return row
 
 # Set the number of rows you want for the fake dataset
-num_rows = len(df_cleaned) * 0.4
+num_rows = int(len(df_cleaned) * 0.4)
 
 # Generate the fake dataset iteratively
 fake_data = []
@@ -29,5 +31,4 @@ for _ in range(num_rows):
 # Create the DataFrame with the generated data
 df_fake = pd.DataFrame(fake_data)
 
-# Display the first few rows of the DataFrame
-print(df_fake.head())
+st.write(df_fake)
