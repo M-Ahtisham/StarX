@@ -35,8 +35,8 @@ st.markdown(
 )
 
 
-
 df_cleaned = st.session_state.df_c
+
 
 #Removes the outliers
 df_cleaned = df_cleaned[df_cleaned['Kms_driven'] != 690000]
