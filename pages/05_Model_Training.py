@@ -1,23 +1,23 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn import linear_model
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 
 # Page Header
-st.header("Regression Analysis with Uploaded Data")
+st.header("Model Training and Predictions")
 
 # Upload CSV file
-DATA_PATH = 'data/Quikr_car.csv'
+uploaded_file = 'data/Quikr_car.csv'
 
-if DATA_PATH is not None:
-    # Load the CSV file into a DataFrame
-    df = pd.read_csv(DATA_PATH)
+if uploaded_file is not None:
+    # Load and clean the dataset
+    df = pd.read_csv(uploaded_file)
 
-    # Display the dataset
     st.write("### Dataset Preview")
     st.dataframe(df)
 
-    # Ensure the dataset is numeric
+   # Ensure the dataset is numeric
     # Step 1: Clean the 'Price' Column
     df['Price'] = df['Price'].replace('[₹,]', '', regex=True)
     df['Price'] = df['Price'].replace('Ask For Price', pd.NA)
@@ -46,8 +46,8 @@ if DATA_PATH is not None:
     st.header("Cleaned DataFrame")
     st.dataframe(df_cleaned)
 
-    # Select columns for regression
-    st.write("### Select Features and Target for Regression")
+    # Feature and Target Selection
+    st.write("### Select Features and Target for Training")
     feature_columns = st.multiselect("Select feature columns (X)", options=df.columns)
     target_column = st.selectbox("Select target column (Y)", options=df.columns)
 
@@ -58,41 +58,47 @@ if DATA_PATH is not None:
         # Train-test split
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
-        # Linear Regression
+        # Train Linear Regression Model
         regr = linear_model.LinearRegression()
         regr.fit(X_train, Y_train)
+
+        # Predictions and Evaluation
         Y_pred = regr.predict(X_test)
-
-        # Display Coefficients and Model Metrics
-        st.write("### Linear Regression Results")
-        st.write(f"Coefficients: {regr.coef_}")
         score = regr.score(X_test, Y_test)
-        st.write(f"R² Score: {score}")
-        cross_val = cross_val_score(regr, X, Y, cv=5)
-        st.write(f"Cross-Validation Scores: {cross_val}")
 
-        # Lasso Regression
-        alpha = st.slider("Select alpha for Lasso Regression", 0.01, 1.0, step=0.01, value=0.1)
-        regr_lasso = linear_model.Lasso(alpha=alpha)
-        regr_lasso.fit(X_train, Y_train)
-        Y_pred_lasso = regr_lasso.predict(X_test)
+        st.write("### Model Results")
+        st.success(f"Model trained successfully! R² Score: {score:.2f}")
+        st.write("#### Coefficients:")
+        st.write(regr.coef_)
 
-        # Display Lasso Metrics
-        st.write("### Lasso Regression Results")
-        st.write(f"Coefficients: {regr_lasso.coef_}")
-        score_lasso = regr_lasso.score(X_test, Y_test)
-        st.write(f"Lasso R² Score: {score_lasso}")
-        cross_val_lasso = cross_val_score(regr_lasso, X, Y, cv=5)
-        st.write(f"Lasso Cross-Validation Scores: {cross_val_lasso}")
+        # User Input for Predictions
+        st.write("### Make Predictions")
+        input_values = {}
+        for col in feature_columns:
+            input_values[col] = st.number_input(f"Enter value for {col}", value=float(X[col].mean()))
+
+        if st.button("Predict"):
+            input_data = pd.DataFrame([input_values])
+            prediction = regr.predict(input_data)
+            st.write(f"#### Predicted Value: {prediction[0]:.2f}")
+
+        # Visualizations
+        st.write("### Visualization")
+        fig, ax = plt.subplots()
+        ax.scatter(X_test[feature_columns[0]], Y_test, color="blue", label="Actual")
+        ax.scatter(X_test[feature_columns[0]], Y_pred, color="red", label="Predicted")
+        ax.set_xlabel(feature_columns[0])
+        ax.set_ylabel(target_column)
+        ax.legend()
+        st.pyplot(fig)
 
     else:
-        st.warning("Please select both feature columns (X) and a target column (Y).")
+        st.warning("Please select both features and target columns.")
 else:
     st.info("Awaiting CSV file upload...")
 
 
 
-import streamlit as st
 
 #This is a Custom Styling
 st.markdown(
