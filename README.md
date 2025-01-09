@@ -11,17 +11,29 @@ Bhatti, Muhammad Ahtisham, 22301502
 # Project Description
 StarX is a data-driven application designed to analyze and provide insights into car prices in India. By leveraging a comprehensive dataset of vehicles, the project aims to help users explore trends, evaluate factors affecting car pricing, and receive personalized pricing recommendations.
 
-# Project Installation
+# Project Installation nd running
 1. Clone the repository:  
    `git clone https://mygit.th-deg.de/mb04502/StarX`
 
 2. Navigate to the project folder:  
    `cd starx`
 
-3. Install dependencies:  
+3. Create a virtual environment:
+   - On Windows:
+      `python -m venv .venv`
+   - On macOS/Linux:
+      `python3 -m venv .venv`
+
+4. Activate the virtual environment:  
+   - On Windows:  
+     `.venv\Scripts\activate`
+   - On macOS/Linux:  
+     `source .venv/bin/activate`
+
+5. Install dependencies:  
    `pip install -r requirements.txt`
 
-4. Start the app:  
+6. Start the app:  
    `streamlit run main.py`
 
 # Project Data

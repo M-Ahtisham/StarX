@@ -1,0 +1,5 @@
+.venv
+.git
+
+# Files used for debugging only
+pages/10_Debugging.py

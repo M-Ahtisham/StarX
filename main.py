@@ -1,60 +1,31 @@
 import streamlit as st
-
-#This is a Custom Styling
-st.markdown(
-    """
-    <style>
-    :root {
-        --sidebar-text-color: #000000;      /* Default text color for light mode */
-        --sidebar-bg-color: #e8edf1;       /* Default background color for light mode */
-        --sidebar-highlight-color: #d6e4f5; /* Light blue tint for light mode */
-    }
-
-    [data-testid="stSidebarContent"] {
-        color: var(--sidebar-text-color);  /* Dynamic Sidebar text color */
-        background-color: var(--sidebar-bg-color);  /* Dynamic Sidebar background */
-        font-family: 'Arial', sans-serif;  /* Stylish font */
-        padding: 15px;  /* Adds some padding */
-        border-radius: 10px;  /* Smooth corner style */
-        border: 2px solid var(--sidebar-highlight-color); /* Blue highlight border */
-        box-shadow: 0px 4px 8px var(--sidebar-highlight-color); /* Blue shadow effect */
-    }
-
-    /* Dark mode styles */
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --sidebar-text-color: #ffffff;  /* Text color for dark mode */
-            --sidebar-bg-color: #333333;   /* Background color for dark mode */
-            --sidebar-highlight-color: #4a90e2; /* Dark blue tint for dark mode */
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+import pandas as pd
 
 
-st.markdown("# StarX")
+st.markdown("""
+# StarX
 
-st.write("This app provides insights into car prices in India based on a dataset containing details like location, year, kilometers driven, fuel type, and ownership.")
+This app provides insights into car prices in India based on a dataset containing details like location, year, kilometers driven, fuel type, and ownership.
 
-st.write("You can explore the data and get insights such as:")
-st.write("- Average car prices by location and brand.")
-st.write("- The impact of kilometers driven and fuel type on car pricing.")
-st.write("- Recommendations for pricing based on user inputs.")
+You can explore the data and get insights such as:
+- **Average car prices** by location and brand.
+- **The impact of kilometers driven and fuel type** on car pricing.
+- **Recommendations for pricing** based on user inputs.
 
-st.markdown("## Dataset Overview")
+## Dataset Overview
 
-st.write("The dataset contains the following columns:")
-st.write("- **Name**: The name and model of the car.")
-st.write("- **Label**: Category of the car (e.g., Platinum).")
-st.write("- **Location**: The city where the car is located.")
-st.write("- **Price**: The price of the car in Indian Rupees.")
-st.write("- **Kms_driven**: The distance the car has traveled.")
-st.write("- **Fuel_type**: The type of fuel the car uses (Petrol/Diesel).")
-st.write("- **Owner**: Ownership history of the car.")
-st.write("- **Year**: The year the car was manufactured.")
-st.write("- **Company**: The manufacturer of the car.")
+The dataset contains the following columns:
+- **Name**: The name and model of the car.
+- **Label**: Category of the car (e.g., Platinum).
+- **Location**: The city where the car is located.
+- **Price**: The price of the car in Indian Rupees.
+- **Kms_driven**: The distance the car has traveled.
+- **Fuel_type**: The type of fuel the car uses (Petrol/Diesel).
+- **Owner**: Ownership history of the car.
+- **Year**: The year the car was manufactured.
+- **Company**: The manufacturer of the car.
+""")
+
 
 st.sidebar.success("Select the menu points to navigate through the features.")
 
@@ -71,6 +42,95 @@ st.write("'Data acquisition', i.e., loading the dataset, will be implemented in 
 
 st.sidebar.success("Select the menu points from top to bottom in order to use the ML pipeline.")
 
+# Load the CSV file into a DataFrame
+file_path = 'data/Quikr_car.csv' 
+df = pd.read_csv(file_path)
 
+# This stores the data frame in the session state
+st.session_state.original_df = df
+
+
+#This is the old Custom Styling
+# CUSTOM_STYLE = """
+#     <style>
+#     :root {
+#         --sidebar-text-color: #000000;      /* Default text color for light mode */
+#         --sidebar-bg-color: #e8edf1;       /* Default background color for light mode */
+#         --sidebar-highlight-color: #d6e4f5; /* Light blue tint for light mode */
+#     }
+
+#     [data-testid="stSidebarContent"] {
+#         color: var(--sidebar-text-color);  /* Dynamic Sidebar text color */
+#         background-color: var(--sidebar-bg-color);  /* Dynamic Sidebar background */
+#         font-family: 'Arial', sans-serif;  /* Stylish font */
+#         padding: 15px;  /* Adds some padding */
+#         border-radius: 10px;  /* Smooth corner style */
+#         border: 2px solid var(--sidebar-highlight-color); /* Blue highlight border */
+#         box-shadow: 0px 4px 8px var(--sidebar-highlight-color); /* Blue shadow effect */
+#     }
+
+#     /* Dark mode styles */
+#     @media (prefers-color-scheme: dark) {
+#         :root {
+#             --sidebar-text-color: #ffffff;  /* Text color for dark mode */
+#             --sidebar-bg-color: #333333;   /* Background color for dark mode */
+#             --sidebar-highlight-color: #4a90e2; /* Dark blue tint for dark mode */
+#         }
+#     }
+#     </style>
+#     """
+
+#This is a Custom Styling
+CUSTOM_STYLE = """
+    <style>
+    :root {
+        --primary-color: #1a73e8;          /* Vibrant blue for highlights */
+        --secondary-color: #f1f3f4;       /* Light gray for background */
+        --text-color: #202124;            /* Standard text color */
+        --border-radius: 12px;            /* Smooth rounded corners */
+        --shadow-color: rgba(26, 115, 232, 0.3); /* Soft blue shadow */
+    }
+
+    [data-testid="stSidebarContent"] {
+        color: var(--text-color);          /* Sidebar text color */
+        background-color: var(--secondary-color); /* Sidebar background color */
+        font-family: 'Roboto', sans-serif; /* Modern font */
+        padding: 20px;                     /* Adds spacious padding */
+        border-radius: var(--border-radius); /* Rounded corners */
+        border: 2px solid var(--primary-color); /* Highlight border */
+        box-shadow: 0px 4px 12px var(--shadow-color); /* Subtle shadow effect */
+    }
+
+    /* Hover effect for sidebar links */
+    [data-testid="stSidebarContent"] a:hover {
+        color: var(--primary-color);       /* Highlight color on hover */
+        text-decoration: underline;       /* Add underline on hover */
+    }
+
+    /* Dark mode styles */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --primary-color: #4a90e2;      /* Softer blue for dark mode */
+            --secondary-color: #1e1e1e;   /* Darker background */
+            --text-color: #f5f5f5;        /* Lighter text for dark mode */
+            --shadow-color: rgba(74, 144, 226, 0.3); /* Softer shadow for dark mode */
+        }
+
+        [data-testid="stSidebarContent"] {
+            color: var(--text-color);      /* Text color in dark mode */
+            background-color: var(--secondary-color); /* Background in dark mode */
+            border-color: var(--primary-color); /* Border matches primary color */
+        }
+    }
+    </style>
+    """
+
+
+# We store it in the session state
+if "custom_style" not in st.session_state:
+    st.session_state["custom_style"] = CUSTOM_STYLE
+
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
 
 

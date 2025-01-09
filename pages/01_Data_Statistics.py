@@ -1,85 +1,63 @@
-import pandas as pd
 import streamlit as st
+import plotly.express as px
 
-#This is a Custom Styling
-st.markdown(
-    """
-    <style>
-    :root {
-        --sidebar-text-color: #000000;      /* Default text color for light mode */
-        --sidebar-bg-color: #e8edf1;       /* Default background color for light mode */
-        --sidebar-highlight-color: #d6e4f5; /* Light blue tint for light mode */
-    }
+# This loads the dataset from the session 
+df_original = st.session_state.original_df
 
-    [data-testid="stSidebarContent"] {
-        color: var(--sidebar-text-color);  /* Dynamic Sidebar text color */
-        background-color: var(--sidebar-bg-color);  /* Dynamic Sidebar background */
-        font-family: 'Arial', sans-serif;  /* Stylish font */
-        padding: 15px;  /* Adds some padding */
-        border-radius: 10px;  /* Smooth corner style */
-        border: 2px solid var(--sidebar-highlight-color); /* Blue highlight border */
-        box-shadow: 0px 4px 8px var(--sidebar-highlight-color); /* Blue shadow effect */
-    }
-
-    /* Dark mode styles */
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --sidebar-text-color: #ffffff;  /* Text color for dark mode */
-            --sidebar-bg-color: #333333;   /* Background color for dark mode */
-            --sidebar-highlight-color: #4a90e2; /* Dark blue tint for dark mode */
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# Load the CSV file into a DataFrame
-file_path = 'data/Quikr_car.csv'  # Replace with your correct path
-df = pd.read_csv(file_path)
+st.title("Quikr Car Data")
 
 # Display Original DataFrame
-st.title("Quikr Car Data")
 st.header("Original DataFrame")
-df = df.drop('No',axis=1)
-st.dataframe(df)
+st.dataframe(df_original.drop('No',axis=1))
 
-# Step 1: Clean the 'Price' Column
-df['Price'] = df['Price'].replace('[₹,]', '', regex=True)
-df['Price'] = df['Price'].replace('Ask For Price', pd.NA)
-df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
-# Fill NaN values with the median price
-df['Price'].fillna(df['Price'].median(), inplace=True)
+st.write("The Dataset has 9 columns, 3 of which are numeric and 6 are in words.")
 
-# Step 2: Clean the 'Kms_driven' Column
-df['Kms_driven'] = df['Kms_driven'].replace(' kms', '', regex=True).replace(',', '', regex=True)
-df['Kms_driven'] = pd.to_numeric(df['Kms_driven'], errors='coerce')
+st.header("DataFrame Overview")
 
-# Step 3: Encode Categorical Columns
-categorical_columns = ['Label', 'Location', 'Fuel_type', 'Owner', 'Company']
+st.markdown("### Label column overview")
+label_counts = df_original['Label'].value_counts().reset_index()
+label_counts.columns = ['Label', 'Count']  # Rename columns for clarity
+fig_1 = px.bar(label_counts, x='Label', y='Count', title='Count of Labels', text='Count')
+st.plotly_chart(fig_1)
 
-# Fill missing values with "Unknown"
-df[categorical_columns] = df[categorical_columns].fillna('Unknown')
+st.markdown("### Location column overview")
+label_counts = df_original['Location'].value_counts().reset_index()
+label_counts.columns = ['Location', 'Count']  # Rename columns for clarity
+fig_2 = px.bar(label_counts, x='Location', y='Count', title='Count of Cars by Locations', text='Count')
+st.plotly_chart(fig_2)
+st.write("The majority of used cars are concentrated in three cities: Pune, Chennai, and Bangalore, while the remaining cities contribute significantly fewer cars.")
 
-# Encode categorical columns using Pandas factorize
-for col in categorical_columns:
-    df[col] = pd.factorize(df[col])[0]
+st.markdown("### Fuel Type column overview")
+df_original['Fuel_type'] = df_original['Fuel_type'].str.strip() # Removes leading/trailing spaces
+label_counts = df_original['Fuel_type'].value_counts().reset_index()
+label_counts.columns = ['Fuel_type', 'Count']  # Rename columns for clarity
+fig_3 = px.bar(label_counts, x='Fuel_type', y='Count', title='Count of Cars by Fuel Type', text='Count')
+st.plotly_chart(fig_3)
+st.write("The graph highlights that petrol-powered vehicles dominate the dataset, followed by diesel vehicles. Other fuel types, such as CNG, electric, and hybrids, make up a negligible portion, indicating their limited presence in the used car market.")
 
-# Step 4: Drop Unnecessary Columns
-df_cleaned = df.drop(columns=['Name', 'Unnamed: 0'], errors='ignore')
+st.markdown("### Owner column overview")
+label_counts = df_original['Owner'].value_counts().reindex([' 1st Owner', ' 2nd Owner', ' 3rd Owner']).reset_index()
+label_counts.columns = ['Owner', 'Count']  # Rename columns for clarity
+fig_4 = px.bar(label_counts, x='Owner', y='Count', title='Count of Cars by Owner', text='Count')
+st.plotly_chart(fig_4)
+st.write("The majority of cars are 2nd Owner, followed by fewer 1st Owner cars, while 3rd Owner cars are very rare.")
 
-# Display Cleaned DataFrame
-st.header("Cleaned DataFrame")
-st.dataframe(df_cleaned)
+st.markdown("### Year column overview")
+label_counts = df_original['Year'].value_counts().reset_index()
+label_counts.columns = ['Year', 'Count']  # Rename columns for clarity
+fig_5 = px.bar(label_counts, x='Year', y='Count', title='Count of Cars by Year', text='Count')
+st.plotly_chart(fig_5)
+st.write("The majority of cars were manufactured between 2016 and 2018, while the number of cars from other years is significantly lower.")
 
-# Display Summary Information
-st.subheader("Data Summary and Statistics")
-st.write(df_cleaned.describe())
+st.markdown("### Company column overview")
+label_counts = df_original['Company'].value_counts().reset_index()
+label_counts.columns = ['Company', 'Count']  # Rename columns for clarity
+fig_6 = px.bar(label_counts, x='Company', y='Count', title='Count of Cars by Company', text='Count')
+st.plotly_chart(fig_6)
 
-st.markdown("## Correlations of features")
-st.write(df_cleaned.corr())
 
-if 'df_c' not in st.session_state:
-    st.session_state['df_c'] = df_cleaned
+# Store the original dataframe in the session state
+st.session_state["df_original"] = df_original
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
