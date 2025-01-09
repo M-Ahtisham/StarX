@@ -10,6 +10,9 @@ def main():
     st.markdown("# Fake Data Generator")
     
     st.markdown("### Data Randomization")
+    st.write("This page generates synthetic data by randomly creating rows based on the ranges and patterns observed in the original dataset.")
+
+    st.write("Click on the button below to create a random dataset")
     
     # Loads the processed data from the session state
     df_processed = st.session_state.df_processed.copy()
@@ -36,9 +39,12 @@ def main():
             "Company": random.randint(1, 25),  # Random company as numeric
         }
     
+    df_randomized = pd.DataFrame([random_car_data() for _ in range(1000)]) # Creates a randomized dataset
+    st.session_state["df_randomized"] = df_randomized
+        
     if st.button("Randomize Data"):
         df_randomized = pd.DataFrame([random_car_data() for _ in range(1000)]) # Creates a randomized dataset
-        st.session_state["df_randomized"] = df_randomized
+        st.session_state["df_randomized"] = df_randomized # Updates the data in the session state
 
         
     cols = st.columns(2)
@@ -49,15 +55,20 @@ def main():
 
     cols[1].markdown("### Randomized Data")
     cols[1].dataframe(st.session_state.df_randomized)
-    cols[1].markdown("### Processed Data metrics")
+    cols[1].markdown("### Random Data metrics")
     cols[1].dataframe(df_randomized.describe())
     
     
-if "df_randomized" not in st.session_state:
-    st.session_state.df_randomized = pd.DataFrame(columns=df_processed.columns, index=range(1000))
-
 if "df_processed" in st.session_state:
     main()
     
 else:
     st.error("⚠️ Some variables not found in the session state. Please restart the app or launch the pages in the correct order.")
+    
+    
+if "df_randomized" not in st.session_state:
+    st.session_state.df_randomized = pd.DataFrame(columns=df_processed.columns, index=range(1000))
+
+
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
