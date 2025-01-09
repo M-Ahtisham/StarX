@@ -2,97 +2,84 @@ import streamlit as st
 import pandas as pd
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+# Load the DataFrame from session state
+if "df_processed" in st.session_state:
+    df_processed = st.session_state.df_processed.copy()
+else:
+    st.error("No data found in session state. Please upload and process data first.")
+    st.stop()
 
 # Page Header
-st.header("Regression Analysis with Uploaded Data")
+st.title("📊 Regression Algorithm Comparison")
 
-# Upload CSV file
-DATA_PATH = 'data/Quikr_car.csv'
+# Select columns for regression
+st.write("### 🔧 Select Features and Target for Regression")
+feature_columns = st.multiselect("📌 Select feature columns (X)", options=df_processed.columns)
+target_column = st.selectbox("🎯 Select target column (Y)", options=df_processed.columns)
 
-if DATA_PATH is not None:
-    # Load the CSV file into a DataFrame
-    df = pd.read_csv(DATA_PATH)
+if feature_columns and target_column:
+    # Prepare the data
+    X = df_processed[feature_columns]
+    Y = df_processed[target_column]
 
-    # Display the dataset
-    st.write("### Dataset Preview")
-    st.dataframe(df)
+    # Train-test split
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
-    # Ensure the dataset is numeric
-    # Step 1: Clean the 'Price' Column
-    df['Price'] = df['Price'].replace('[₹,]', '', regex=True)
-    df['Price'] = df['Price'].replace('Ask For Price', pd.NA)
-    df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
-# Fill NaN values with the median price
-    df['Price'].fillna(df['Price'].median(), inplace=True)
+    # --- Linear Regression ---
+    st.subheader("📈 Linear Regression")
+    regr = linear_model.LinearRegression()
+    regr.fit(X_train, Y_train)
+    Y_pred = regr.predict(X_test)
 
-# Step 2: Clean the 'Kms_driven' Column
-    df['Kms_driven'] = df['Kms_driven'].replace(' kms', '', regex=True).replace(',', '', regex=True)
-    df['Kms_driven'] = pd.to_numeric(df['Kms_driven'], errors='coerce')
+    # Calculate metrics
+    r2 = r2_score(Y_test, Y_pred)
+    mae = mean_absolute_error(Y_test, Y_pred)
+    rmse = mean_squared_error(Y_test, Y_pred, squared=False)
+    cross_val = cross_val_score(regr, X, Y, cv=5)
 
-# Step 3: Encode Categorical Columns
-    categorical_columns = ['Label', 'Location', 'Fuel_type', 'Owner', 'Company']
+    # Display results
+    st.success("✅ The Linear Regression model is trained!")
+    st.write(f"**Y_pred:** {Y_pred[0]}")
+    st.write(f"**Linear Regression Score:** {r2:.4f}")
+    st.write(f"**Linear Regression Cross-Validation Scores:** {cross_val}")
 
-# Fill missing values with "Unknown"
-    df[categorical_columns] = df[categorical_columns].fillna('Unknown')
+    # --- Lasso Regression ---
+    st.subheader("📉 Lasso Regression")
+    alpha = st.slider("🎛 Select alpha for Lasso Regression", 0.01, 1.0, step=0.01, value=0.1)
+    regr_lasso = linear_model.Lasso(alpha=alpha)
+    regr_lasso.fit(X_train, Y_train)
+    Y_pred_lasso = regr_lasso.predict(X_test)
 
-# Encode categorical columns using Pandas factorize
-    for col in categorical_columns:
-        df[col] = pd.factorize(df[col])[0]
+    # Calculate metrics
+    r2_lasso = r2_score(Y_test, Y_pred_lasso)
+    mae_lasso = mean_absolute_error(Y_test, Y_pred_lasso)
+    rmse_lasso = mean_squared_error(Y_test, Y_pred_lasso, squared=False)
+    cross_val_lasso = cross_val_score(regr_lasso, X, Y, cv=5)
 
-# Step 4: Drop Unnecessary Columns
-    df_cleaned = df.drop(columns=['Name', 'Unnamed: 0'], errors='ignore')
+    # Display results
+    st.success("✅ The Lasso model is trained!")
+    st.write(f"**Y_pred2:** {Y_pred_lasso[0]}")
+    st.write(f"**Lasso Score:** {r2_lasso:.4f}")
+    st.write(f"**Lasso Cross-Validation Scores:** {cross_val_lasso}")
 
-# Display Cleaned DataFrame
-    st.header("Cleaned DataFrame")
-    st.dataframe(df_cleaned)
+    # --- Comparison Section ---
+    st.subheader("🔍 Comparison of Algorithms")
 
-    # Select columns for regression
-    st.write("### Select Features and Target for Regression")
-    feature_columns = st.multiselect("Select feature columns (X)", options=df.columns)
-    target_column = st.selectbox("Select target column (Y)", options=df.columns)
+    # Create a DataFrame for comparison
+    comparison_df = pd.DataFrame({
+        "Metric": ["R² Score", "Mean Absolute Error (MAE)", "Root Mean Squared Error (RMSE)"],
+        "Linear Regression": [r2, mae, rmse],
+        "Lasso Regression": [r2_lasso, mae_lasso, rmse_lasso]
+    })
 
-    if feature_columns and target_column:
-        X = df[feature_columns]
-        Y = df[target_column]
+    # Display comparison table
+    st.write(comparison_df)
 
-        # Train-test split
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+    # Determine the best algorithm
+    best_algorithm = "Linear Regression" if r2 > r2_lasso else "Lasso Regression"
+    st.success(f"🏆 Based on the R² Score, the best algorithm for your dataset is: **{best_algorithm}**")
 
-        # Linear Regression
-        regr = linear_model.LinearRegression()
-        regr.fit(X_train, Y_train)
-        Y_pred = regr.predict(X_test)
-
-        # Display Coefficients and Model Metrics
-        st.write("### Linear Regression Results")
-        st.write(f"Coefficients: {regr.coef_}")
-        score = regr.score(X_test, Y_test)
-        st.write(f"R² Score: {score}")
-        cross_val = cross_val_score(regr, X, Y, cv=5)
-        st.write(f"Cross-Validation Scores: {cross_val}")
-
-        # Lasso Regression
-        alpha = st.slider("Select alpha for Lasso Regression", 0.01, 1.0, step=0.01, value=0.1)
-        regr_lasso = linear_model.Lasso(alpha=alpha)
-        regr_lasso.fit(X_train, Y_train)
-        Y_pred_lasso = regr_lasso.predict(X_test)
-
-        # Display Lasso Metrics
-        st.write("### Lasso Regression Results")
-        st.write(f"Coefficients: {regr_lasso.coef_}")
-        score_lasso = regr_lasso.score(X_test, Y_test)
-        st.write(f"Lasso R² Score: {score_lasso}")
-        cross_val_lasso = cross_val_score(regr_lasso, X, Y, cv=5)
-        st.write(f"Lasso Cross-Validation Scores: {cross_val_lasso}")
-
-    else:
-        st.warning("Please select both feature columns (X) and a target column (Y).")
 else:
-    st.info("Awaiting CSV file upload...")
-
-
-
-import streamlit as st
-
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+    st.warning("⚠️ Please select both feature columns (X) and a target column (Y).")
