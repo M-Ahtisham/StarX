@@ -149,7 +149,7 @@ if uploaded_file:
             # Warn the user if they haven't selected features and target
             st.warning("Please select both feature columns (X) and a target column (Y).")
 
-import streamlit as st
+
 
 
 # Apply the style on every page

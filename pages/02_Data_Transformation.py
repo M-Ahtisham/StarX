@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib
 import seaborn as sns
 import copy
+import os
 
 
 # This loads the dataset from the session 
@@ -158,3 +159,5 @@ st.plotly_chart(px.scatter(df_transformed, x ='Year', y='Price'))
 st.session_state["df_transformed"] = df_transformed
 # Apply the style on every page
 st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
+
