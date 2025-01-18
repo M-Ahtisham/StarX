@@ -8,7 +8,7 @@ if "chat_history" not in st.session_state:
 # Function to reset the chat
 def reset_chat():
     st.session_state.chat_history = []
-    st.experimental_rerun()
+    st.rerun()  # Updated to use st.rerun()
 
 # Title and header
 st.title("🏎️ Car Insights Chatbot")
@@ -106,3 +106,6 @@ with st.expander("FAQs and Tips"):
         - **Want to reset the chat?**: Use the "Start a New Chat" button above.
         """
     )
+
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)

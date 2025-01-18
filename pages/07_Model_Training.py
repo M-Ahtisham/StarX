@@ -1,30 +1,87 @@
 import streamlit as st
 import pandas as pd
 import seaborn as sns
-from sklearn.linear_model import LinearRegression, Lasso
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
+# Mapping for Fuel Types
+fuel_type_mapping = {
+    1: "Petrol",
+    2: "Diesel",
+    3: "CNG",
+    4: "Electric",
+    5: "Petrol + CNG",
+    6: "LPG",
+    7: "Hybrid"
+}
+reverse_fuel_type_mapping = {v: k for k, v in fuel_type_mapping.items()}
+
+# Mapping for Owner Types
+owner_mapping = {
+    "1st Owner": 1,
+    "2nd Owner": 2,
+    "3rd Owner": 3
+}
+reverse_owner_mapping = {v: k for k, v in owner_mapping.items()}
+
+# Mapping for Companies
+company_mapping = {
+    "Maruti": 1,
+    "Hyundai": 2,
+    "Honda": 3,
+    "Ford": 4,
+    "Tata": 5,
+    "Renault": 6,
+    "Mahindra": 7,
+    "Toyota": 8,
+    "MG": 9,
+    "Volkswagen": 10,
+    "Jeep": 11,
+    "Kia": 12,
+    "BMW": 13,
+    "Skoda": 14,
+    "Nissan": 15,
+    "Audi": 16,
+    "Datsun": 17,
+    "Mercedes": 18,
+    "Fiat": 19,
+    "Volvo": 20,
+    "Jaguar": 21,
+    "SsangYong": 22,
+    "Land Rover": 23,
+    "Porsche": 24
+}
+reverse_company_mapping = {v: k for k, v in company_mapping.items()}
+
 # Load the DataFrame from session state
 df_processed = st.session_state.df_processed.copy()
 
-# Ensure proper data types
+# Ensure proper data types and map descriptive names
 df_processed['Fuel_type'] = df_processed['Fuel_type'].astype(int)
+df_processed['Fuel_type_label'] = df_processed['Fuel_type'].map(fuel_type_mapping)
 df_processed['Owner'] = df_processed['Owner'].astype(int)
+df_processed['Owner_label'] = df_processed['Owner'].map(reverse_owner_mapping)
+df_processed['Company_label'] = df_processed['Company'].map(reverse_company_mapping)
 
 # Title and description
-st.title("\U0001F697 Car Price Prediction")
+st.title("Car Price Prediction")
 st.write("This application predicts car prices based on various factors and provides insights into the dataset.")
 
 # Sidebar for inputs
 st.sidebar.header("Input Features")
 year = st.sidebar.slider("Year", int(df_processed["Year"].min()), int(df_processed["Year"].max()), 2017)
-location = st.sidebar.selectbox("Location", df_processed["Location"].unique())
-company = st.sidebar.selectbox("Company", df_processed["Company"].unique())
-fuel_type = st.sidebar.radio("Fuel Type", sorted(df_processed["Fuel_type"].unique()), index=0)
+location = st.sidebar.selectbox("Location", sorted(df_processed["Location"].unique()))
+company_label = st.sidebar.selectbox("Company", sorted(company_mapping.keys()))
+fuel_type_label = st.sidebar.radio("Fuel Type", sorted(fuel_type_mapping.values()), index=0)
 kms_driven = st.sidebar.slider("Kms Driven", int(df_processed["Kms_driven"].min()), int(df_processed["Kms_driven"].max()), 40000)
-owner = st.sidebar.radio("Owner Type", sorted(df_processed["Owner"].unique()), index=0)
+owner_label = st.sidebar.radio("Owner Type", sorted(owner_mapping.keys()), index=0)
+
+# Convert selected fuel type, owner type, and company back to numeric values
+fuel_type = reverse_fuel_type_mapping[fuel_type_label]
+owner = owner_mapping[owner_label]
+company = company_mapping[company_label]
 
 # Display input features in the main page
 st.header("\U0001F527 Adjust Input Features")
@@ -33,68 +90,92 @@ with col1:
     st.write("### Selected Features")
     st.write(f"- **Year:** {year}")
     st.write(f"- **Location:** {location}")
-    st.write(f"- **Company:** {company}")
-    st.write(f"- **Fuel Type:** {fuel_type}")
+    st.write(f"- **Company:** {company_label}")
+    st.write(f"- **Fuel Type:** {fuel_type_label}")
     st.write(f"- **Kms Driven:** {kms_driven}")
-    st.write(f"- **Owner Type:** {owner}")
+    st.write(f"- **Owner Type:** {owner_label}")
 
 # Prepare data for prediction
 X = pd.get_dummies(df_processed[["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"]], drop_first=True)
 y = df_processed["Price"]
 
-# Train-test split and model training
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train-test split (60% train, 40% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
-# Linear Regression
-lin_model = LinearRegression()
-lin_model.fit(X_train, y_train)
-y_pred_test_lin = lin_model.predict(X_test)
-lin_mse = mean_squared_error(y_test, y_pred_test_lin)
-
-# Lasso Regression
-lasso_model = Lasso(alpha=0.1)  # Alpha can be tuned for better performance
-lasso_model.fit(X_train, y_train)
-y_pred_test_lasso = lasso_model.predict(X_test)
-lasso_mse = mean_squared_error(y_test, y_pred_test_lasso)
-
-# Predict on the input data
+# Reindex the input data to match columns in X
 input_data = pd.DataFrame([[location, kms_driven, fuel_type, owner, year, company]], 
                           columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
 input_data = pd.get_dummies(input_data, drop_first=True).reindex(columns=X.columns, fill_value=0)
-prediction_lasso = lasso_model.predict(input_data)[0]
 
-# Display prediction
+# Lasso Regression
+lasso_model = Lasso(alpha=0.1)
+lasso_model.fit(X_train, y_train)
+lasso_pred = lasso_model.predict(X_test)
+lasso_mse = mean_squared_error(y_test, lasso_pred)
+lasso_pred_input = lasso_model.predict(input_data)[0]
+
+# Ridge Regression
+ridge_model = Ridge(alpha=1.0)
+ridge_model.fit(X_train, y_train)
+ridge_pred = ridge_model.predict(X_test)
+ridge_mse = mean_squared_error(y_test, ridge_pred)
+ridge_pred_input = ridge_model.predict(input_data)[0]
+
+# Display predictions
 with col2:
     st.write("### Prediction Results")
-    st.success(f"Predicted Price (Lasso): \u20b9{prediction_lasso:,.2f}")
+    st.success(f"Predicted Price (Lasso): ₹{lasso_pred_input:,.2f}")
+    st.info(f"Predicted Price (Ridge): ₹{ridge_pred_input:,.2f}")
+
+# Model input and prediction context
+st.header("Model Context and Predictions")
+st.markdown(
+    f"""
+    - **Lasso Predicted Price:** ₹{lasso_pred_input:,.2f}
+    - **Ridge Predicted Price:** ₹{ridge_pred_input:,.2f}
+    """,
+    unsafe_allow_html=True
+)
 
 # Model performance metrics
 st.header("\U0001F4CA Model Performance")
 col3, col4 = st.columns(2)
 with col3:
-    st.metric("Linear Regression MSE", f"{lin_mse:.2f}")
     st.metric("Lasso Regression MSE", f"{lasso_mse:.2f}")
-    st.write("Lasso regression helps reduce overfitting and improves feature selection.")
+    st.metric("Ridge Regression MSE", f"{ridge_mse:.2f}")
 with col4:
     st.metric("Training Samples", f"{len(X_train)}")
     st.metric("Test Samples", f"{len(X_test)}")
 
-# Visualization: Price distribution by year
+# Visualization: Kms Driven vs. Price with Predictions Highlighted
 st.header("\U0001F4C8 Data Insights")
-st.subheader("Price Distribution by Year")
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.boxplot(data=df_processed, x="Year", y="Price", palette="coolwarm", ax=ax)
-plt.title("Car Price Distribution by Year")
-plt.xlabel("Year")
-plt.ylabel("Price (\u20b9)")
-st.pyplot(fig)
-
-# Visualization: Scatterplot of Kms Driven vs. Price
 st.subheader("Kms Driven vs. Price")
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.scatterplot(data=df_processed, x="Kms_driven", y="Price", hue="Fuel_type", palette="viridis", ax=ax)
-plt.title("Kms Driven vs. Price with Fuel Type")
-plt.xlabel("Kms Driven")
-plt.ylabel("Price (\u20b9)")
-plt.legend(title="Fuel Type", loc="upper right")
+
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.scatterplot(
+    data=df_processed,
+    x="Kms_driven",
+    y="Price",
+    ax=ax
+)
+
+# Highlight the predicted price for Lasso and Ridge
+ax.scatter(
+    [kms_driven],
+    [lasso_pred_input],
+    color="red",
+    s=50,
+    label="Lasso Predicted Price"
+)
+ax.scatter(
+    [kms_driven],
+    [ridge_pred_input],
+    color="red",
+    s=50,
+    label="Ridge Predicted Price"
+)
+
+ax.set_title("Kms Driven vs. Price with Predictions Highlighted")
+ax.set_xlabel("Kms Driven")
+ax.set_ylabel("Price (₹)")
 st.pyplot(fig)
