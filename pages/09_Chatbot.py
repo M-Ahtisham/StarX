@@ -1,121 +1,108 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import time
 
-# Initialize chatbot context in session state
-if "context" not in st.session_state:
-    st.session_state.context = {}
+# Initialize session state for chat history
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-# File upload section
-st.title("Interactive Chatbot for Dataset Exploration")
-st.subheader("Original Dataset")
-uploaded_file = 'data/Quikr_car.csv'
+# Function to reset the chat
+def reset_chat():
+    st.session_state.chat_history = []
+    st.experimental_rerun()
 
-# Load dataset and store it in session state
-if uploaded_file or isinstance(uploaded_file, str):  # Support both file uploads and file paths
-    try:
-        # Load dataset based on file type or hardcoded file path
-        if isinstance(uploaded_file, str):  # When a file path is directly provided
-            if uploaded_file.endswith('.csv'):
-                df = pd.read_csv(uploaded_file)
-            elif uploaded_file.endswith('.xlsx'):
-                df = pd.read_excel(uploaded_file)
-            elif uploaded_file.endswith('.json'):
-                df = pd.read_json(uploaded_file)
-        else:  # When a file is uploaded through Streamlit
-            if uploaded_file.name.endswith('.csv'):
-                df = pd.read_csv(uploaded_file)
-            elif uploaded_file.name.endswith('.xlsx'):
-                df = pd.read_excel(uploaded_file)
-            elif uploaded_file.name.endswith('.json'):
-                df = pd.read_json(uploaded_file)
-        
-        # Store dataset in context
-        st.session_state.context['dataset'] = df
-        st.session_state.context['columns'] = df.columns.tolist()
-        st.session_state.context['row_count'] = df.shape[0]
-        st.session_state.context['data_preview'] = df.head().to_dict()
-        
-        # Display the uploaded dataset
-        st.subheader("Uploaded Dataset")
-        st.dataframe(df)
+# Title and header
+st.title("🏎️ Car Insights Chatbot")
+st.subheader("Ask me anything about cars in India!")
+st.markdown("---")
 
-        # Provide dataset summary
-        st.write(f"### Dataset Summary")
-        st.write(f"- **Number of rows:** {df.shape[0]}")
-        st.write(f"- **Number of columns:** {df.shape[1]}")
-        st.write(f"- **Columns:** {', '.join(df.columns)}")
+# Load the DataFrame from session state
+df_processed = st.session_state.df_processed.copy()
 
-    except Exception as e:
-        st.error(f"Error loading the dataset: {e}")
-else:
-    st.info("Please upload a dataset to proceed.")
+# Button to start a new chat
+if st.button("🗑️ Start a New Chat"):
+    reset_chat()
 
-# Chatbot response function
-def chatbot_response(query):
-    """
-    Provides intelligent responses based on user queries and uploaded dataset.
-    """
-    context = st.session_state.context
+# Display chat history in bubbles
+for message in st.session_state.chat_history:
+    if message["role"] == "user":
+        st.markdown(
+            f"""
+            <div style="background-color: #dcf8c6; padding: 10px; border-radius: 10px; margin: 5px 0; max-width: 70%; float: right; clear: both;">
+                <strong>You:</strong> {message['text']}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    elif message["role"] == "bot":
+        st.markdown(
+            f"""
+            <div style="background-color: #f1f0f0; padding: 10px; border-radius: 10px; margin: 5px 0; max-width: 70%; float: left; clear: both;">
+                <strong>Bot:</strong> {message['text']}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    if "dataset" not in context:
-        return "No dataset loaded. Please upload a dataset first."
+st.markdown("---")
 
-    # Handle queries related to dataset structure
-    if "columns" in query.lower():
-        return f"The dataset contains the following columns: {', '.join(context['columns'])}."
-    
-    if "row count" in query.lower() or "size" in query.lower():
-        return f"The dataset has {context['row_count']} rows."
+# Input box for user query
+user_input = st.text_input("Type your message here 👇", key="user_input")
 
-    if "preview" in query.lower() or "first rows" in query.lower():
-        return f"Here is a preview of the dataset:\n{pd.DataFrame(context['data_preview'])}"
+# Quick reply buttons
+st.markdown("Quick Replies:")
+cols = st.columns([1, 1, 1, 1, 1])
+if cols[0].button("Tell me car prices"):
+    user_input = "Tell me car prices"
+if cols[1].button("Latest car models"):
+    user_input = "Latest car models"
+if cols[2].button("Fuel types"):
+    user_input = "Fuel types"
+if cols[3].button("Thank you"):
+    user_input = "Thank you"
+if cols[4].button("Goodbye"):
+    user_input = "Goodbye"
 
-    # Handle queries related to visualization
-    if "visualize" in query.lower() or "scatter" in query.lower():
-        if "columns" in context:
-            return f"Available columns for visualization: {', '.join(context['columns'])}."
-        else:
-            return "No columns available for visualization. Please upload a dataset."
+if user_input:
+    # Add a typing animation for bot response
+    with st.spinner("Bot is typing..."):
+        time.sleep(1.5)  # Simulates typing delay
 
-    # Default response for unsupported queries
-    return "I'm sorry, I couldn't understand your question. Please ask about the dataset structure, size, preview, or visualizations."
+    # Bot response logic
+    if user_input.lower() in ["hi", "hello", "hey"]:
+        bot_response = "Hello! How can I assist you today?"
+    elif user_input.lower() in ["bye", "goodbye"]:
+        bot_response = "Goodbye! Have a great day!"
+    elif user_input.lower() == "thank you":
+        bot_response = "You're welcome!"
+    elif user_input.lower() == "tell me car prices":
+        bot_response = "Car prices in India range from ₹2.5 lakhs to over ₹1 crore depending on the model and brand."
+    elif user_input.lower() == "latest car models":
+        bot_response = "The latest car models include Hyundai Exter, Tata Nexon EV, and Maruti Jimny."
+    elif user_input.lower() == "fuel types":
+        bot_response = "Cars are available in petrol, diesel, electric, and CNG fuel types."
+    else:
+        bot_response = f"Sorry, I don't have an answer for '{user_input}' yet. Ask me something else!"
 
-# Chatbot interaction section
-st.header("Ask the Chatbot")
-user_query = st.text_input("Ask a question about your dataset (e.g., 'What are the columns?', 'Visualize data').")
+    # Save the conversation
+    st.session_state.chat_history.append({"role": "user", "text": user_input})
+    st.session_state.chat_history.append({"role": "bot", "text": bot_response})
 
-if user_query:
-    response = chatbot_response(user_query)
-    st.write(f"Chatbot: {response}")
+    # Display the bot response
+    st.markdown(
+        f"""
+        <div style="background-color: #f1f0f0; padding: 10px; border-radius: 10px; margin: 5px 0; max-width: 70%; float: left; clear: both;">
+            <strong>Bot:</strong> {bot_response}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-# Scatter plot visualization if requested by the user
-if "visualize" in user_query.lower() and "dataset" in st.session_state.context:
-    st.subheader("Scatter Plot Visualization")
-
-    # User selects columns for scatter plot
-    x_axis = st.selectbox("Select X-axis for the scatter plot", options=st.session_state.context['columns'])
-    y_axis = st.selectbox("Select Y-axis for the scatter plot", options=st.session_state.context['columns'])
-
-    # Display scatter plot
-    if x_axis and y_axis:
-        st.write(f"### Scatter Plot: {x_axis} vs {y_axis}")
-        fig, ax = plt.subplots()
-        ax.scatter(df[x_axis], df[y_axis], alpha=0.7, color="blue")
-        ax.set_xlabel(x_axis)
-        ax.set_ylabel(y_axis)
-        ax.set_title(f"{x_axis} vs {y_axis}")
-        st.pyplot(fig)
-
-# Download section for processed dataset
-if "dataset" in st.session_state.context:
-    st.subheader("Download Processed Dataset")
-    processed_csv = st.session_state.context['dataset'].to_csv(index=False).encode('utf-8')
-    st.download_button("Download Dataset as CSV", data=processed_csv, file_name="processed_dataset.csv", mime="text/csv")
-
-
-import streamlit as st
-
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+# Expandable FAQ section
+with st.expander("FAQs and Tips"):
+    st.write(
+        """
+        - **What can I ask?**: You can ask about car prices, fuel types, latest models, and more.
+        - **Can the chatbot handle greetings?**: Yes! Try saying "Hi", "Hello", or "Thank you".
+        - **Want to reset the chat?**: Use the "Start a New Chat" button above.
+        """
+    )
