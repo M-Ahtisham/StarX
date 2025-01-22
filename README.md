@@ -73,7 +73,7 @@ Once the environment is set up, you can run the project using the following comm
 StarX implements the requests as follows
 
 1. _A multi-page Web App with Streamlit (https://streamlit.io) has to be developed._
-   - StarX consists of 9 pages, all pages have to be run in the correct order since they depend on the actions from the prevois page
+   - StarX consists of 9 pages, all pages have to be run in the correct order since they depend on the actions from the previous page
 
 
 2. _For source code and documentation, a MyGit repository and Wiki has to be used._
@@ -108,7 +108,7 @@ ones), or other._
    - Data is imported when the main.py file is run. This is then stored in a session state and then used by the other pages.
 
 10. _The data must be analyzed in the app (e.g. with Pandas, a Jupyter notebook must not be submitted), so that an app user gets on overview (e.g. of correlations, min/max, median, …). The result must be visualized in the app._
-      - The data is analysed and an overview is given to the user in Page 1. For more information see "Data Statistics" tab after running the app.
+      - The data is analysed and an overview is given to the user in Page 1 after which the Data is transformed in Page 2, then the correlations, min/max and other metrics are descibed in the Data Transformation tab. For more information see "Data Statistics" and "Data Transformation" tab after running the app. 
 
 11. _The data must be described in a Wiki section. The description must include the feature variables, their values incl. basic statistics like min/max, transformation (if done) and a description of the target variable._
       - ❌
