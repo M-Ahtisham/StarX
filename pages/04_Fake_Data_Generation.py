@@ -39,11 +39,11 @@ def main():
             "Company": random.randint(1, 25),  # Random company as numeric
         }
     
-    df_randomized = pd.DataFrame([random_car_data() for _ in range(1000)]) # Creates a randomized dataset
+    df_randomized = pd.DataFrame([random_car_data() for _ in range(500)]) # Creates a randomized dataset
     st.session_state["df_randomized"] = df_randomized
         
     if st.button("Randomize Data"):
-        df_randomized = pd.DataFrame([random_car_data() for _ in range(1000)]) # Creates a randomized dataset
+        df_randomized = pd.DataFrame([random_car_data() for _ in range(500)]) # Creates a randomized dataset
         st.session_state["df_randomized"] = df_randomized # Updates the data in the session state
 
         
@@ -53,9 +53,9 @@ def main():
     cols[0].markdown("### Data metrics")
     cols[0].dataframe(df_processed.describe())
 
-    cols[1].markdown("### Randomized Data")
+    cols[1].markdown("### Fake Data")
     cols[1].dataframe(st.session_state.df_randomized)
-    cols[1].markdown("### Random Data metrics")
+    cols[1].markdown("### Fake Data metrics")
     cols[1].dataframe(df_randomized.describe())
     
     
