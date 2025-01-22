@@ -1,85 +1,89 @@
 import streamlit as st
 import pandas as pd
-from sklearn import linear_model
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import altair as alt
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.model_selection import cross_val_score
+import numpy as np
 
 # Load the DataFrame from session state
-if "df_processed" in st.session_state:
-    df_processed = st.session_state.df_processed.copy()
+df_processed = st.session_state.df_processed.copy()
+
+# Check and ensure that required columns exist
+required_columns = ['Price', 'Kms_driven']  # Replace with actual column names
+if not all(col in df_processed.columns for col in required_columns):
+    st.error(f"The required columns {required_columns} are not in the DataFrame. Available columns: {df_processed.columns.tolist()}")
 else:
-    st.error("No data found in session state. Please upload and process data first.")
-    st.stop()
+    # Extract features and target (ensure correct column names from your dataset)
+    X = df_processed[['Kms_driven']].values  # Replace 'Kms_driven' with your actual feature column name
+    y = df_processed['Price'].values    # Replace 'Price' with your actual target column name
 
-# Page Header
-st.title("📊 Regression Algorithm Comparison")
+    # Normalize features to highlight model differences
+    X_mean = X.mean()
+    X_std = X.std()
+    X_normalized = (X - X_mean) / X_std
 
-# Select columns for regression
-st.write("### 🔧 Select Features and Target for Regression")
-feature_columns = st.multiselect("📌 Select feature columns (X)", options=df_processed.columns)
-target_column = st.selectbox("🎯 Select target column (Y)", options=df_processed.columns)
+    # Models
+    ridge_model = Ridge(alpha=1.0)
+    lasso_model = Lasso(alpha=0.1)
 
-if feature_columns and target_column:
-    # Prepare the data
-    X = df_processed[feature_columns]
-    Y = df_processed[target_column]
+    # Train models
+    ridge_model.fit(X_normalized, y)
+    lasso_model.fit(X_normalized, y)
 
-    # Train-test split
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+    # Predictions and scores
+    y_pred = ridge_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
+    y_pred2 = lasso_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
 
-    # --- Linear Regression ---
-    st.subheader("📈 Linear Regression")
-    regr = linear_model.LinearRegression()
-    regr.fit(X_train, Y_train)
-    Y_pred = regr.predict(X_test)
+    ridge_score = ridge_model.score(X_normalized, y)
+    ridge_cv_scores = cross_val_score(ridge_model, X_normalized, y, cv=5)
 
-    # Calculate metrics
-    r2 = r2_score(Y_test, Y_pred)
-    mae = mean_absolute_error(Y_test, Y_pred)
-    rmse = mean_squared_error(Y_test, Y_pred, squared=False)
-    cross_val = cross_val_score(regr, X, Y, cv=5)
+    lasso_score = lasso_model.score(X_normalized, y)
+    lasso_cv_scores = cross_val_score(lasso_model, X_normalized, y, cv=5)
 
-    # Display results
-    st.success("✅ The Linear Regression model is trained!")
-    st.write(f"**Y_pred:** {Y_pred[0]}")
-    st.write(f"**Linear Regression Score:** {r2:.4f}")
-    st.write(f"**Linear Regression Cross-Validation Scores:** {cross_val}")
+    # Layout for Ridge Regression Feedback
+    st.success("✅ The Ridge Regression model is trained!")
+    st.write(f"**Y_pred**: {y_pred[0]}")
+    st.write(f"**Ridge regression score**: {ridge_score:.3f}")
+    st.write(f"**Ridge regression cross_val_scores**: {ridge_cv_scores}")
 
-    # --- Lasso Regression ---
-    st.subheader("📉 Lasso Regression")
-    alpha = st.slider("🎛 Select alpha for Lasso Regression", 0.01, 1.0, step=0.01, value=0.1)
-    regr_lasso = linear_model.Lasso(alpha=alpha)
-    regr_lasso.fit(X_train, Y_train)
-    Y_pred_lasso = regr_lasso.predict(X_test)
-
-    # Calculate metrics
-    r2_lasso = r2_score(Y_test, Y_pred_lasso)
-    mae_lasso = mean_absolute_error(Y_test, Y_pred_lasso)
-    rmse_lasso = mean_squared_error(Y_test, Y_pred_lasso, squared=False)
-    cross_val_lasso = cross_val_score(regr_lasso, X, Y, cv=5)
-
-    # Display results
+    # Layout for Lasso Feedback
     st.success("✅ The Lasso model is trained!")
-    st.write(f"**Y_pred2:** {Y_pred_lasso[0]}")
-    st.write(f"**Lasso Score:** {r2_lasso:.4f}")
-    st.write(f"**Lasso Cross-Validation Scores:** {cross_val_lasso}")
+    st.write(f"**Y_pred2**: {y_pred2[0]}")
+    st.write(f"**Lasso score**: {lasso_score:.3f}")
+    st.write(f"**Lasso cross_val_scores**: {lasso_cv_scores}")
 
-    # --- Comparison Section ---
-    st.subheader("🔍 Comparison of Algorithms")
-
-    # Create a DataFrame for comparison
-    comparison_df = pd.DataFrame({
-        "Metric": ["R² Score", "Mean Absolute Error (MAE)", "Root Mean Squared Error (RMSE)"],
-        "Linear Regression": [r2, mae, rmse],
-        "Lasso Regression": [r2_lasso, mae_lasso, rmse_lasso]
+    # Adding Comparison Chart
+    chart_data = pd.DataFrame({
+        'Model': ['Ridge Regression', 'Lasso Regression'],
+        'Test R²': [ridge_score, lasso_score],
+        'Mean CV R²': [ridge_cv_scores.mean(), lasso_cv_scores.mean()]
     })
 
-    # Display comparison table
-    st.write(comparison_df)
+    st.markdown("### R² Scores Comparison")
 
-    # Determine the best algorithm
-    best_algorithm = "Linear Regression" if r2 > r2_lasso else "Lasso Regression"
-    st.success(f"🏆 Based on the R² Score, the best algorithm for your dataset is: **{best_algorithm}**")
+    chart = alt.Chart(chart_data).transform_fold(
+        ['Test R²', 'Mean CV R²'],
+        as_=['Metric', 'Value']
+    ).mark_bar().encode(
+        x=alt.X('Model:N', title="Model"),
+        y=alt.Y('Value:Q', title="R² Score"),
+        color=alt.Color('Metric:N', title="Metric"),
+        tooltip=['Metric:N', 'Value:Q']
+    ).properties(
+        width=600,
+        height=400,
+        title="R² Scores Comparison"
+    )
 
-else:
-    st.warning("⚠️ Please select both feature columns (X) and a target column (Y).")
+    st.altair_chart(chart)
+
+    # Adding Final Selection Option
+    selected_model = st.selectbox(
+        "Select your preferred model based on the scores:",
+        options=['Ridge Regression', 'Lasso Regression']
+    )
+
+    st.write(f"### You selected: {selected_model}")
+
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)

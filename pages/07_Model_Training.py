@@ -1,122 +1,181 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn import linear_model
+import seaborn as sns
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-import numpy as np
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Mapping for Fuel Types
+fuel_type_mapping = {
+    1: "Petrol",
+    2: "Diesel",
+    3: "CNG",
+    4: "Electric",
+    5: "Petrol + CNG",
+    6: "LPG",
+    7: "Hybrid"
+}
+reverse_fuel_type_mapping = {v: k for k, v in fuel_type_mapping.items()}
+
+# Mapping for Owner Types
+owner_mapping = {
+    "1st Owner": 1,
+    "2nd Owner": 2,
+    "3rd Owner": 3
+}
+reverse_owner_mapping = {v: k for k, v in owner_mapping.items()}
+
+# Mapping for Companies
+company_mapping = {
+    "Maruti": 1,
+    "Hyundai": 2,
+    "Honda": 3,
+    "Ford": 4,
+    "Tata": 5,
+    "Renault": 6,
+    "Mahindra": 7,
+    "Toyota": 8,
+    "MG": 9,
+    "Volkswagen": 10,
+    "Jeep": 11,
+    "Kia": 12,
+    "BMW": 13,
+    "Skoda": 14,
+    "Nissan": 15,
+    "Audi": 16,
+    "Datsun": 17,
+    "Mercedes": 18,
+    "Fiat": 19,
+    "Volvo": 20,
+    "Jaguar": 21,
+    "SsangYong": 22,
+    "Land Rover": 23,
+    "Porsche": 24
+}
+reverse_company_mapping = {v: k for k, v in company_mapping.items()}
 
 # Load the DataFrame from session state
-if "df_processed" in st.session_state:
-    df_processed = st.session_state.df_processed.copy()
-else:
-    st.error("No data found in session state. Please upload and process data first.")
-    st.stop()
+df_processed = st.session_state.df_processed.copy()
 
-# Page Header
-st.header("📈 Model Training and Predictions")
+# Ensure proper data types and map descriptive names
+df_processed['Fuel_type'] = df_processed['Fuel_type'].astype(int)
+df_processed['Fuel_type_label'] = df_processed['Fuel_type'].map(fuel_type_mapping)
+df_processed['Owner'] = df_processed['Owner'].astype(int)
+df_processed['Owner_label'] = df_processed['Owner'].map(reverse_owner_mapping)
+df_processed['Company_label'] = df_processed['Company'].map(reverse_company_mapping)
 
-# Feature and Target Selection
-st.write("### 🔧 Select Features and Target for Training")
-feature_columns = st.multiselect("📌 Select feature columns (X)", options=df_processed.columns)
-target_column = st.selectbox("🎯 Select target column (Y)", options=df_processed.columns)
+# Title and description
+st.title("Car Price Prediction")
+st.write("This application predicts car prices based on various factors and provides insights into the dataset.")
 
-# Train-Test Split Slider
-st.write("### ⚙️ Train-Test Split Ratio")
-train_size = st.slider("Select training set size (%)", 50, 90, 80) / 100
+# Sidebar for inputs
+st.sidebar.header("Input Features")
+year = st.sidebar.slider("Year", int(df_processed["Year"].min()), int(df_processed["Year"].max()), 2017)
+location = st.sidebar.selectbox("Location", sorted(df_processed["Location"].unique()))
+company_label = st.sidebar.selectbox("Company", sorted(company_mapping.keys()))
+fuel_type_label = st.sidebar.radio("Fuel Type", sorted(fuel_type_mapping.values()), index=0)
+kms_driven = st.sidebar.slider("Kms Driven", int(df_processed["Kms_driven"].min()), int(df_processed["Kms_driven"].max()), 40000)
+owner_label = st.sidebar.radio("Owner Type", sorted(owner_mapping.keys()), index=0)
 
-if feature_columns and target_column:
-    # Prepare data
-    X = df_processed[feature_columns]
-    Y = df_processed[target_column]
+# Convert selected fuel type, owner type, and company back to numeric values
+fuel_type = reverse_fuel_type_mapping[fuel_type_label]
+owner = owner_mapping[owner_label]
+company = company_mapping[company_label]
 
-    # Train-test split
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=1-train_size, random_state=42)
+# Display input features in the main page
+st.header("\U0001F527 Adjust Input Features")
+col1, col2 = st.columns(2)
+with col1:
+    st.write("### Selected Features")
+    st.write(f"- **Year:** {year}")
+    st.write(f"- **Location:** {location}")
+    st.write(f"- **Company:** {company_label}")
+    st.write(f"- **Fuel Type:** {fuel_type_label}")
+    st.write(f"- **Kms Driven:** {kms_driven}")
+    st.write(f"- **Owner Type:** {owner_label}")
 
-    # Model Selection
-    st.write("### 🤖 Select Regression Model")
-    model_type = st.selectbox("Choose model type", ["Linear Regression", "Ridge Regression", "Lasso Regression"])
+# Prepare data for prediction
+X = pd.get_dummies(df_processed[["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"]], drop_first=True)
+y = df_processed["Price"]
 
-    # Hyperparameter Slider for Ridge/Lasso
-    alpha = 1.0
-    if model_type != "Linear Regression":
-        alpha = st.slider("Select Regularization Strength (Alpha)", 0.01, 10.0, 1.0)
+# Train-test split (60% train, 40% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
-    # Model Training
-    if model_type == "Linear Regression":
-        model = linear_model.LinearRegression()
-    elif model_type == "Ridge Regression":
-        model = linear_model.Ridge(alpha=alpha)
-    else:
-        model = linear_model.Lasso(alpha=alpha)
+# Reindex the input data to match columns in X
+input_data = pd.DataFrame([[location, kms_driven, fuel_type, owner, year, company]], 
+                          columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
+input_data = pd.get_dummies(input_data, drop_first=True).reindex(columns=X.columns, fill_value=0)
 
-    model.fit(X_train, Y_train)
+# Lasso Regression
+lasso_model = Lasso(alpha=0.1)
+lasso_model.fit(X_train, y_train)
+lasso_pred = lasso_model.predict(X_test)
+lasso_mse = mean_squared_error(y_test, lasso_pred)
+lasso_pred_input = lasso_model.predict(input_data)[0]
 
-    # Predictions and Evaluation
-    Y_pred = model.predict(X_test)
-    r2_score = model.score(X_test, Y_test)
+# Ridge Regression
+ridge_model = Ridge(alpha=1.0)
+ridge_model.fit(X_train, y_train)
+ridge_pred = ridge_model.predict(X_test)
+ridge_mse = mean_squared_error(y_test, ridge_pred)
+ridge_pred_input = ridge_model.predict(input_data)[0]
 
-    # Calculate error metrics
-    mae = mean_absolute_error(Y_test, Y_pred)
-    mse = mean_squared_error(Y_test, Y_pred)
-    rmse = np.sqrt(mse)
+# Display predictions
+with col2:
+    st.write("### Prediction Results")
+    st.success(f"Predicted Price (Lasso): ₹{lasso_pred_input:,.2f}")
+    st.info(f"Predicted Price (Ridge): ₹{ridge_pred_input:,.2f}")
 
-    # Visualizations
-    st.write("### 📊 Visualizations")
+# Model input and prediction context
+st.header("Model Context and Predictions")
+st.markdown(
+    f"""
+    - **Lasso Predicted Price:** ₹{lasso_pred_input:,.2f}
+    - **Ridge Predicted Price:** ₹{ridge_pred_input:,.2f}
+    """,
+    unsafe_allow_html=True
+)
 
-    # Create columns for side-by-side charts
-    col1, col2 = st.columns(2)
+# Model performance metrics
+st.header("\U0001F4CA Model Performance")
+col3, col4 = st.columns(2)
+with col3:
+    st.metric("Lasso Regression MSE", f"{lasso_mse:.2f}")
+    st.metric("Ridge Regression MSE", f"{ridge_mse:.2f}")
+with col4:
+    st.metric("Training Samples", f"{len(X_train)}")
+    st.metric("Test Samples", f"{len(X_test)}")
 
-    # Scatter Plot for Actual vs. Predicted
-    with col1:
-        st.write("#### 📈 Actual vs. Predicted")
-        fig1, ax1 = plt.subplots()
-        ax1.scatter(Y_test, Y_pred, color="#6a0dad")
-        ax1.plot([Y_test.min(), Y_test.max()], [Y_test.min(), Y_test.max()], "--", color="#ff4500")
-        ax1.set_xlabel("Actual Values")
-        ax1.set_ylabel("Predicted Values")
-        ax1.set_title("Actual vs. Predicted Values")
-        st.pyplot(fig1)
+# Visualization: Kms Driven vs. Price with Predictions Highlighted
+st.header("\U0001F4C8 Data Insights")
+st.subheader("Kms Driven vs. Price")
 
-    # Residual Plot
-    with col2:
-        st.write("#### 🔄 Residuals Plot")
-        residuals = Y_test - Y_pred
-        fig2, ax2 = plt.subplots()
-        ax2.scatter(Y_pred, residuals, color="#1f77b4")
-        ax2.axhline(y=0, color="#ff6347", linestyle="--")
-        ax2.set_xlabel("Predicted Values")
-        ax2.set_ylabel("Residuals")
-        ax2.set_title("Residuals Plot")
-        st.pyplot(fig2)
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.scatterplot(
+    data=df_processed,
+    x="Kms_driven",
+    y="Price",
+    ax=ax
+)
 
-    # Display Model Results
-    st.write("### ✅ Model Results")
-    st.success(f"Model trained successfully! **R² Score:** {r2_score:.2f}")
-    st.write(f"**Mean Absolute Error (MAE):** {mae:.2f}")
-    st.write(f"**Mean Squared Error (MSE):** {mse:.2f}")
-    st.write(f"**Root Mean Squared Error (RMSE):** {rmse:.2f}")
+# Highlight the predicted price for Lasso and Ridge
+ax.scatter(
+    [kms_driven],
+    [lasso_pred_input],
+    color="red",
+    s=50,
+    label="Lasso Predicted Price"
+)
+ax.scatter(
+    [kms_driven],
+    [ridge_pred_input],
+    color="red",
+    s=50,
+    label="Ridge Predicted Price"
+)
 
-    st.write("#### 🔍 Coefficients:")
-    st.write(pd.DataFrame(model.coef_, index=feature_columns, columns=["Coefficient"]))
-
-    # User Input for Predictions
-    st.write("### 🔮 Make Predictions")
-    input_values = {}
-    for col in feature_columns:
-        input_values[col] = st.number_input(f"Enter value for {col}", value=float(X[col].mean()))
-
-    if st.button("Predict"):
-        try:
-            input_data = pd.DataFrame([input_values])
-            prediction = model.predict(input_data)
-            st.write(f"#### 🎯 Predicted Value: **{prediction[0]:.2f}**")
-        except Exception as e:
-            st.error(f"Error in prediction: {e}")
-
-else:
-    st.warning("⚠️ Please select both features and target columns.")
-
-# Apply the style on every page
-if "custom_style" in st.session_state:
-    st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+ax.set_title("Kms Driven vs. Price with Predictions Highlighted")
+ax.set_xlabel("Kms Driven")
+ax.set_ylabel("Price (₹)")
+st.pyplot(fig)

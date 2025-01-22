@@ -42,3 +42,5 @@ st.session_state["df_processed"] = df_processed
 
 # Apply the style on every page
 st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
+df_processed.to_csv("data/preprocessed.csv")
