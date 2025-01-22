@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import seaborn as sns
-from sklearn.linear_model import Lasso, Ridge
+from sklearn.linear_model import Lasso, Ridge, LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
@@ -100,7 +100,7 @@ X = pd.get_dummies(df_processed[["Location", "Kms_driven", "Fuel_type", "Owner",
 y = df_processed["Price"]
 
 # Train-test split (60% train, 40% test)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Reindex the input data to match columns in X
 input_data = pd.DataFrame([[location, kms_driven, fuel_type, owner, year, company]], 
@@ -121,21 +121,26 @@ ridge_pred = ridge_model.predict(X_test)
 ridge_mse = mean_squared_error(y_test, ridge_pred)
 ridge_pred_input = ridge_model.predict(input_data)[0]
 
+# Linear Regression
+linear_model = LinearRegression()
+linear_model.fit(X_train, y_train)
+linear_pred = linear_model.predict(X_test)
+linear_mse = mean_squared_error(y_test, linear_pred)
+linear_pred_input = linear_model.predict(input_data)[0]
+
+# Linear Regression
+linear_model = LinearRegression()
+linear_model.fit(X_train, y_train)
+linear_pred = linear_model.predict(X_test)
+linear_mse = mean_squared_error(y_test, linear_pred)
+linear_pred_input = linear_model.predict(input_data)[0]
+
 # Display predictions
 with col2:
     st.write("### Prediction Results")
     st.success(f"Predicted Price (Lasso): ₹{lasso_pred_input:,.2f}")
     st.info(f"Predicted Price (Ridge): ₹{ridge_pred_input:,.2f}")
-
-# Model input and prediction context
-st.header("Model Context and Predictions")
-st.markdown(
-    f"""
-    - **Lasso Predicted Price:** ₹{lasso_pred_input:,.2f}
-    - **Ridge Predicted Price:** ₹{ridge_pred_input:,.2f}
-    """,
-    unsafe_allow_html=True
-)
+    st.warning(f"Predicted Price (Linear): ₹{linear_pred_input:,.2f}")
 
 # Model performance metrics
 st.header("\U0001F4CA Model Performance")
@@ -152,30 +157,43 @@ st.header("\U0001F4C8 Data Insights")
 st.subheader("Kms Driven vs. Price")
 
 fig, ax = plt.subplots(figsize=(8, 6))
+
+# Scatter plot using X_test and y_test
 sns.scatterplot(
-    data=df_processed,
-    x="Kms_driven",
-    y="Price",
+    x=X_test['Kms_driven'],  # Assuming 'Kms_driven' is a column in X_test
+    y=y_test,                # The target variable from the test set
     ax=ax
 )
 
 # Highlight the predicted price for Lasso and Ridge
 ax.scatter(
-    [kms_driven],
-    [lasso_pred_input],
+    [kms_driven],           # Example kms_driven value
+    [lasso_pred_input],     # Lasso prediction for the specific input
     color="red",
     s=50,
     label="Lasso Predicted Price"
 )
 ax.scatter(
-    [kms_driven],
-    [ridge_pred_input],
-    color="red",
+    [kms_driven],           # Example kms_driven value
+    [ridge_pred_input],     # Ridge prediction for the specific input
+    color="green",
     s=50,
     label="Ridge Predicted Price"
 )
+ax.scatter(
+    [kms_driven],           # Example kms_driven value
+    [linear_pred_input],     # Ridge prediction for the specific input
+    color="yellow",
+    s=50,
+    label="Linear Predicted Price"
+)
 
-ax.set_title("Kms Driven vs. Price with Predictions Highlighted")
+# Add labels and title
+ax.set_title("Kms Driven vs. Price (Test Data) with Predictions Highlighted")
 ax.set_xlabel("Kms Driven")
 ax.set_ylabel("Price (₹)")
+ax.legend()
+
+# Display the plot
 st.pyplot(fig)
+
