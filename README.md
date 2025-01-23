@@ -9,9 +9,14 @@ Bhatti, Muhammad Ahtisham, 22301502
 [Link to Wiki](https://mygit.th-deg.de/mb04502/StarX/-/wikis/home)
 
 # Project Description
-StarX is a data-driven application designed to analyze and provide insights into car prices in India. By leveraging a comprehensive dataset of vehicles, the project aims to help users explore trends, evaluate factors affecting car pricing, and receive personalized pricing recommendations.
+StarX is a data-driven application designed to analyze and provide clear insights into car prices in India. Using a detailed dataset covering a wide range of vehicles, it helps users understand pricing trends, identify key factors that influence car prices, and make informed decisions. The application also offers personalized pricing recommendations, ensuring users have the right information to evaluate and compare options effectively.
 
-# Project Installation and running
+# Project Installation and Running
+
+Follow these steps to set up and run the StarX application. Make sure to have the correct versions of Python and Streamlit installed.
+
+
+
 1. Clone the repository:  
    `git clone https://mygit.th-deg.de/mb04502/StarX`
 
