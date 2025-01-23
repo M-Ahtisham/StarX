@@ -4,6 +4,8 @@ import plotly.express as px
 # This loads the dataset from the session 
 df_original = st.session_state.original_df
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
 st.title("Quikr Car Data")
 
 # Display Original DataFrame
@@ -59,5 +61,4 @@ st.plotly_chart(fig_6)
 # Store the original dataframe in the session state
 st.session_state["df_original"] = df_original
 
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+

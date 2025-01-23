@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
 # Load the initial DataFrame from session state
 if "df_engineered" not in st.session_state:
     st.session_state.df_engineered = st.session_state.df_processed.copy()
@@ -79,3 +82,5 @@ if scaling_option != "None":
     st.write(f"- Applied scaling: {scaling_option}")
 if st.session_state.get("drop_col"):
     st.write(f"- Dropped columns: {', '.join(st.session_state['drop_col'])}")
+
+

@@ -8,6 +8,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
 # Helper function to generate random car data
 def random_car_data(year_range):
     return {

@@ -1,10 +1,13 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import matplotlib
 import seaborn as sns
-import copy
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
+# This loads the dataset from the session 
+df_original = st.session_state.original_df
 
 st.header("Removing outliers")
 df_transformed = st.session_state.df_transformed
@@ -39,8 +42,3 @@ cols[1].markdown("### Processed Data metrics")
 cols[1].dataframe(df_processed.describe())
 
 st.session_state["df_processed"] = df_processed
-
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
-
-df_processed.to_csv("data/preprocessed.csv")

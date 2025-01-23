@@ -1,11 +1,13 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import matplotlib
 import seaborn as sns
-import copy
-import os
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
+# This loads the dataset from the session 
+df_original = st.session_state.original_df
 
 # This loads the dataset from the session 
 df = st.session_state.df_original.copy()           # To be removed
@@ -157,7 +159,4 @@ st.plotly_chart(px.scatter(df_transformed, x ='Year', y='Price'))
 # This part will be moved to the data Preprocessing
 
 st.session_state["df_transformed"] = df_transformed
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
-
 

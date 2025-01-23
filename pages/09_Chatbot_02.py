@@ -1,6 +1,9 @@
 import streamlit as st
 import time
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
 # Initialize session state for chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -106,6 +109,3 @@ with st.expander("FAQs and Tips"):
         - **Want to reset the chat?**: Use the "Start a New Chat" button above.
         """
     )
-
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)

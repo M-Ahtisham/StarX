@@ -5,6 +5,9 @@ from sklearn.linear_model import Ridge, Lasso
 from sklearn.model_selection import cross_val_score
 import numpy as np
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
 # Load the DataFrame from session state
 df_processed = st.session_state.df_processed.copy()
 
@@ -85,5 +88,3 @@ else:
 
     st.write(f"### You selected: {selected_model}")
 
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)

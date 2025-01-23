@@ -5,6 +5,9 @@ import streamlit as st
 import random
 import copy
 
+# Apply the style on every page
+st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
+
 def main():
     # Header
     st.markdown("# Fake Data Generator")
@@ -70,5 +73,3 @@ if "df_randomized" not in st.session_state:
     st.session_state.df_randomized = pd.DataFrame(columns=df_processed.columns, index=range(1000))
 
 
-# Apply the style on every page
-st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)

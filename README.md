@@ -16,7 +16,6 @@ StarX is a data-driven application designed to analyze and provide clear insight
 Follow these steps to set up and run the StarX application. Make sure to have the correct versions of Python and Streamlit installed.
 
 
-
 1. Clone the repository:  
    `git clone https://mygit.th-deg.de/mb04502/StarX`
 
@@ -41,8 +40,18 @@ Follow these steps to set up and run the StarX application. Make sure to have th
 6. Start the app:  
    `streamlit run main.py`
 
+Versions used are:
+   - Python - 3.9.6
+   - Streamlit - 1.41.1
+   - scikit-learn - 1.6.1
+   - pandas - 2.2.3
+   - matplotlib - 3.9.4
+   - seaborn - 0.13.2
+
+
 # Project Data
-The dataset used in this project is sourced from [Kaggle](https://www.kaggle.com/datasets/abhikalpsrivastava15/quikr-cars-dataset). It contains information about used cars available for sale in India, including details such as:
+
+The dataset used in this project is sourced from [Kaggle](https://www.kaggle.com/datasets/abhikalpsrivastava15/quikr-cars-dataset). It provides information about used cars available for sale in India, with the following features:
 
 - **Name**: The model name of the car.
 - **Label**: The car's classification (e.g., "PLATINUM").
@@ -54,19 +63,32 @@ The dataset used in this project is sourced from [Kaggle](https://www.kaggle.com
 - **Year**: The manufacturing year of the car.
 - **Company**: The car manufacturer (e.g., Ford, Maruti, Hyundai).
 
-This dataset helps analyze trends in used car pricing and identify factors that influence the price such as brand, year, fuel type, and more.
+This dataset is used to analyze trends in used car pricing and identify factors that influence the price, such as brand, manufacturing year, fuel type, and more.
 
-In this project, outliers in the cars dataset were identified by plotting graphs such as scatter plots to visualize values that deviate from the usual range. The rows with these outlier values, particularly in the **Price** and **Kms_driven** columns, were then removed to ensure the dataset is more accurate and representative of typical car listings.
+### Outlier Removal
+Outliers were removed using the **Quantile Method**:
+- **Kms_driven**: Rows above the 99th percentile were removed to exclude excessively high mileage.
+- **Price**: Rows above the 98th percentile were removed to avoid skewness from overly expensive cars.
+
+### Handling Missing Data
+Missing values were filled with column means to ensure consistency.
+
+### Synthetic Data Generation
+Fake rows were added using random values within the original data's min and max range, ensuring realism and balance.
 
 
 # Basic Usage
 To start the project, first ensure that all the required dependencies are installed. You can do this by running the following command:
    
+
    `pip install -r requirements.txt`
 
 Once the environment is set up, you can run the project using the following command:
 
    `streamlit run main.py`
+
+
+   
 ## Key Use Cases
 - **Data Analysis**: Analyze car prices, kilometers driven, and other factors affecting the price.
 - **Visualizations**: View graphical representations of the data, such as price distribution and mileage vs. price.
@@ -116,7 +138,8 @@ ones), or other._
       - The data is analysed and an overview is given to the user in Page 1 after which the Data is transformed in Page 2, then the correlations, min/max and other metrics are descibed in the Data Transformation tab. For more information see "Data Statistics" and "Data Transformation" tab after running the app. 
 
 11. _The data must be described in a Wiki section. The description must include the feature variables, their values incl. basic statistics like min/max, transformation (if done) and a description of the target variable._
-      - ❌
+      - The Data is described in Wiki, the link to the Data Section in the Wiki is [here](https://mygit.th-deg.de/mb04502/StarX/-/wikis/2.-Data).
+
 
 12. _Identify and update outliers, if some exists. Explain your approach in the data chapter of the Wiki._
       - Outlers were found in the data by plotting graphs of the Data, these were removed by Quantile-based-approach, more information is under the Data section in the Wiki.
@@ -127,8 +150,12 @@ ones), or other._
 14. _Add 25-50% realistic fake data sets. What is the effect to the training of the model? Explain you approach for generating the fake data and its influence on the model in the data chapter of the Wiki._
       - ❌
 
-15. _Create several input widgets (at least 3, where 2 must be different) that change some feature variables._
-      - ❌
+15. _Create several input widgets (at least 3, where 2 must be different) that change some feature variables._  
+   - The input widgets were used in the **Model Training** tab of the project. The code for this can be found under `pages/07_Model_Training.py`. The input widgets used include:
+     - **Slider**: Allows users to set a range of values for Years and Kms_Driven features.  
+     - **Selectbox**: Provides a dropdown menu to select from predefined categories. This was used for Location and Company variables.  
+     - **Radio Buttons**: Enables selection of a single option from a set of choices. This was used for Fuel Type variable.
+
 
 16. _At least 2 Scikit-Learn model training algorithms (e.g. from Aurélien Géron, Chapter 4) must be applied in order to predict some variable(s). Argue in the Wiki about which one is best suited for the app._
       - ❌
@@ -137,7 +164,8 @@ ones), or other._
       - ❌
 
 18. _Create a system persona for the chatbot and document it in the Wiki._
-      - ❌
+   - The System Persona for the chatbot is **Ankit Verma**, the lead developer of the StarX app. He embodies the app's mission of providing a seamless and data-driven user experience. Ankit's detailed background, motivations, and contributions can be found in the [Personas](https://mygit.th-deg.de/mb04502/StarX/-/wikis/3.-Personas) section of the project's Wiki.  
+
 
 19. _Create at least 3 sample dialogs for each use case you select for the chatbot. Document them in the Wiki._
       - ❌
