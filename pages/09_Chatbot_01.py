@@ -13,16 +13,17 @@ class Chatbot:
         self.responses = {
             "default": {
                 "greetings": [
-                    "hello", "hi", "hey", "good morning", "good evening", "good afternoon",
+                    "hello", "hi", "hey", "hay", "good morning", "good evening", "good afternoon",
                     "howdy", "hallo", "what's up", "sup", "hi there", "greetings",
                     "good day", "morning", "evening", "afternoon", "thanks", "thank you", 
                     "thanks a lot", "thank you so much", "much appreciated", 
-                    "thankful", "cheers", "ty", "thx", "thanks a ton", "thanks so much"
+                    "thankful", "cheers", "thx", "thanks a ton", "thanks so much"
                 ],
                 "responses": {
                     "hello": "Hi there! How can I assist you today?",
                     "hi": "Hello! What can I do for you?",
                     "hey": "Hey! How's it going? How can I help?",
+                    "hay": "Hey! How's it going? How can I help?",
                     "good morning": "Good morning! Hope you're having a great start to your day. How can I assist?",
                     "good evening": "Good evening! What can I do for you tonight?",
                     "good afternoon": "Good afternoon! How can I be of service?",
@@ -43,7 +44,6 @@ class Chatbot:
                     "much appreciated": "Anytime! I'm here to help.",
                     "thankful": "You're welcome! Always happy to assist.",
                     "cheers": "Cheers! Let me know if there's anything else I can do.",
-                    "ty": "You're welcome!",
                     "thx": "No problem! Let me know if you need anything else.",
                     "thanks a ton": "You're welcome! Glad I could help.",
                     "thanks so much": "You're welcome! Feel free to ask if you need anything else."
