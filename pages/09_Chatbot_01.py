@@ -1,5 +1,8 @@
 import streamlit as st
 import pickle
+import pandas as pd
+
+
 
 
 class Chatbot:
@@ -113,16 +116,16 @@ class Chatbot:
 
 
 
-    def load_model():
+    def load_model(self):
         model_path = 'models/linear_model.pkl'
         with open(model_path, 'rb') as model_file:
             model = pickle.load(model_file)
         return model
 
     # Function to process car purchase and predict price
-    def process_car_purchase(kms_driven, owners, year, location=2, fuel_type=1, company=3):
+    def process_car_purchase(self,kms_driven, owners, year, location=2, fuel_type=1, company=3):
         # Load the model from the saved .pkl file
-        model = load_model()
+        model = self.load_model()
         
         # Prepare the input data
         input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]], 
