@@ -159,7 +159,7 @@ st.write("We can also notice some outliers, most notably is the car with 690,000
 st.markdown("### Graph of Years against Price")
 st.plotly_chart(px.scatter(df_transformed, x ='Year', y='Price'))
 st.write("The scatter plot indicates a clear trend where newer cars are more expensive then older cars.")
-st.write("We can also notice an outlier, most notable one is the car with a price of 7,500,000 INR. These are removed in the net page.")
+st.write("We can also notice an outlier, most notable one is the car with a price of 7,500,000 INR. These are removed in the next page.")
 
 st.session_state["df_transformed"] = df_transformed
 

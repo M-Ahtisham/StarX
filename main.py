@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 
-st.markdown("""
-# StarX
 
+st.title("StarX")
+st.image("imgs/star_x.webp")
+
+st.markdown("""
 This app provides insights into car prices in India based on a dataset containing details like location, year, kilometers driven, fuel type, and ownership.
 
 You can explore the data and get insights such as:

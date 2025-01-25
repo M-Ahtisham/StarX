@@ -4,7 +4,6 @@ import pandas as pd
 
 
 
-
 class Chatbot:
     def __init__(self):
         self.state = "default"
@@ -14,7 +13,7 @@ class Chatbot:
             "default": {
                 "greetings": [
                     "hello", "hi", "hey", "hay", "good morning", "good evening", "good afternoon",
-                    "howdy", "hallo", "what's up", "sup", "hi there", "greetings",
+                    "howdy", "hallo", "servus", "what's up", "sup", "hi there", "greetings",
                     "good day", "morning", "evening", "afternoon", "thanks", "thank you", 
                     "thanks a lot", "thank you so much", "much appreciated", 
                     "thankful", "cheers", "thx", "thanks a ton", "thanks so much"
@@ -29,6 +28,7 @@ class Chatbot:
                     "good afternoon": "Good afternoon! How can I be of service?",
                     "howdy": "Howdy! What brings you here today?",
                     "hallo": "Hallo! Wie kann ich Ihnen helfen",
+                    "servus": "Servus! Wia ko i Eana huifa?",
                     "what's up": "Not much, just here to help you out! What's up with you?",
                     "sup": "Sup! What do you need help with?",
                     "hi there": "Hi there! How can I make your day easier?",
@@ -57,8 +57,37 @@ class Chatbot:
             "process_car_data": {
                 "prompt": "Thank you! Let me process your car purchase request.",
                 "next_step": None  # End state
+            },
+            "best_deal": {
+                "prompt": "What price range are you looking to buy cars in? Please provide a price range (e.g., 0-10000, 10000-50000).",
+                "next_step": "process_best_deal"
+            },
+            "process_best_deal": {
+                "prompt": "Let me find the best deal for you based on your price range.",
+                "next_step": None  # End state
             }
         }
+        self.car_data = [
+            {"name": "\n • Ford Ikon - 2009, 73,000 Kms driven, Price 59,000INR at Chennai", "price": 59000},
+            {"name": "\n • Ford Ikon - 2008, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
+            {"name": "\n • Maruti Suzuki Alto - 2001, 85,000 Kms driven, Price 79,000INR at Chennai", "price": 79000},
+            {"name": "\n • Tata Nano - 2011, 37,000 Kms driven, Price 89,000INR at Chennai", "price": 89000},
+            {"name": "\n • Tata Indica - 2011, 67,000 Kms driven, Price 89,000INR at Chennai", "price": 89000},
+            {"name": "\n • Hyundai Santro Xing - 2004, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
+            {"name": "\n • Maruti Suzuki Wagon R - 2007, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
+            {"name": "\n • Maruti Suzuki 800 - 2000, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
+            {"name": "\n • Hyundai Getz - 2006, 73,000 Kms driven, Price 1,19,000INR at Chennai", "price": 119000},
+            {"name": "\n • Chevrolet Aveo - 2007, 63,000 Kms driven, Price 67,000INR at Chennai", "price": 67000}
+        ]
+        self.price_ranges = [
+            (0, 10000),
+            (10000, 50000),
+            (50000, 100000),
+            (100000, 200000),
+            (200000, 500000),
+            (500000, 1000000),
+            (1000000, 2000000)
+        ]
 
     def detect_keywords(self, user_input, keywords):
         return any(keyword in user_input.lower() for keyword in keywords)
@@ -73,11 +102,41 @@ class Chatbot:
     def respond(self, user_input):
         self.add_to_history("You", user_input)
 
-        # Handle specific states
+        ########### ---- Use Case 1 ----- ##########
+
         if self.state == "buy_car":
             response = self.responses["buy_car"]["prompt"]
             self.add_to_history("Bot", response)
             self.set_state(self.responses["buy_car"]["next_step"])
+            return response
+        
+        ########### ---- Use Case 2 ----- #########
+        elif self.state == "best_deal":
+            # Ask for price range
+            response = self.responses["best_deal"]["prompt"]
+            self.add_to_history("Bot", response)
+            self.set_state(self.responses["best_deal"]["next_step"])
+            return response
+        
+        elif self.state == "process_best_deal":
+            # Get the price range from the user input
+            try:
+                price_range = [int(x.strip()) for x in user_input.split("-")]
+                if len(price_range) == 2:
+                    min_price, max_price = price_range
+                    matching_cars = self.get_matching_cars(min_price, max_price)
+                    if matching_cars:
+                        car_names = [car['name'] for car in matching_cars]
+                        response = f"Here are some cars in your price range: {', '.join(car_names)}."
+                    else:
+                        response = "Sorry, no cars match your price range."
+                    self.add_to_history("Bot", response)
+                    self.set_state("default")  # Reset state after processing
+                else:
+                    response = "Please provide a valid price range (e.g., 0-10000)."
+            except Exception as e:
+                response = "There was an error processing your input. Please try again."
+            
             return response
 
         elif self.state == "process_car_data":
@@ -96,9 +155,16 @@ class Chatbot:
             
             return response
 
+
+
+
+
         # Default state
         else:
-            if "buy" in user_input.lower() and "car" in user_input.lower():
+            if self.detect_keywords(user_input, ["best", "deal"]):
+                response = "I can help you find the best deal! What price range are you looking for?"
+                self.set_state("best_deal")
+            elif "buy" in user_input.lower() and "car" in user_input.lower():
                 response = "Sure, I can help you buy a car! Let's get started. What is your name?"
                 self.set_state("buy_car")
             else:
@@ -113,6 +179,9 @@ class Chatbot:
 
         self.add_to_history("Bot", response)
         return response
+
+    def get_matching_cars(self, min_price, max_price):
+        return [car for car in self.car_data if min_price <= car["price"] <= max_price]
 
 
 
@@ -164,13 +233,14 @@ st.markdown(
         padding: 10px;
         border-radius: 15px;
         margin: 5px 0;
-        max-width: 70%;
+        max-width: 60%;
     }
     .user {
         background-color: #0084ff;
         color: white;
         text-align: right;
         margin-left: auto;
+        max-width: 50%;
     }
     .bot {
         background-color: #f1f0f0;
@@ -192,6 +262,9 @@ st.markdown(
 # Display chat messages dynamically
 st.markdown("### Chat History")
 for key, message in st.session_state.bot.chat_history.items():
+    
+    # Replace line breaks with <br> tags
+    message = message.replace("\n", "<br>")
     if "You" in key:
         st.markdown(
             f"""
