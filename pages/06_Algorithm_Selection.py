@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-from sklearn.linear_model import Ridge, Lasso
+from sklearn.linear_model import Ridge, Lasso, LinearRegression
 from sklearn.model_selection import cross_val_score
 import numpy as np
 
@@ -28,14 +28,17 @@ else:
     # Models
     ridge_model = Ridge(alpha=1.0)
     lasso_model = Lasso(alpha=0.1)
+    linear_model = LinearRegression()
 
     # Train models
     ridge_model.fit(X_normalized, y)
     lasso_model.fit(X_normalized, y)
+    linear_model.fit(X_normalized, y)
 
     # Predictions and scores
-    y_pred = ridge_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
-    y_pred2 = lasso_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
+    y_pred_ridge = ridge_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
+    y_pred_lasso = lasso_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
+    y_pred_linear = linear_model.predict(([[50000]] - X_mean) / X_std)  # Normalize input
 
     ridge_score = ridge_model.score(X_normalized, y)
     ridge_cv_scores = cross_val_score(ridge_model, X_normalized, y, cv=5)
@@ -43,23 +46,32 @@ else:
     lasso_score = lasso_model.score(X_normalized, y)
     lasso_cv_scores = cross_val_score(lasso_model, X_normalized, y, cv=5)
 
+    linear_score = linear_model.score(X_normalized, y)
+    linear_cv_scores = cross_val_score(linear_model, X_normalized, y, cv=5)
+
     # Layout for Ridge Regression Feedback
     st.success("✅ The Ridge Regression model is trained!")
-    st.write(f"**Y_pred**: {y_pred[0]}")
+    st.write(f"**Y_pred (Ridge)**: {y_pred_ridge[0]}")
     st.write(f"**Ridge regression score**: {ridge_score:.3f}")
     st.write(f"**Ridge regression cross_val_scores**: {ridge_cv_scores}")
 
     # Layout for Lasso Feedback
     st.success("✅ The Lasso model is trained!")
-    st.write(f"**Y_pred2**: {y_pred2[0]}")
+    st.write(f"**Y_pred (Lasso)**: {y_pred_lasso[0]}")
     st.write(f"**Lasso score**: {lasso_score:.3f}")
     st.write(f"**Lasso cross_val_scores**: {lasso_cv_scores}")
 
+    # Layout for Linear Regression Feedback
+    st.success("✅ The Linear Regression model is trained!")
+    st.write(f"**Y_pred (Linear Regression)**: {y_pred_linear[0]}")
+    st.write(f"**Linear Regression score**: {linear_score:.3f}")
+    st.write(f"**Linear Regression cross_val_scores**: {linear_cv_scores}")
+
     # Adding Comparison Chart
     chart_data = pd.DataFrame({
-        'Model': ['Ridge Regression', 'Lasso Regression'],
-        'Test R²': [ridge_score, lasso_score],
-        'Mean CV R²': [ridge_cv_scores.mean(), lasso_cv_scores.mean()]
+        'Model': ['Ridge Regression', 'Lasso Regression', 'Linear Regression'],
+        'Test R²': [ridge_score, lasso_score, linear_score],
+        'Mean CV R²': [ridge_cv_scores.mean(), lasso_cv_scores.mean(), linear_cv_scores.mean()]
     })
 
     st.markdown("### R² Scores Comparison")
@@ -83,8 +95,7 @@ else:
     # Adding Final Selection Option
     selected_model = st.selectbox(
         "Select your preferred model based on the scores:",
-        options=['Ridge Regression', 'Lasso Regression']
+        options=['Ridge Regression', 'Lasso Regression', 'Linear Regression']
     )
 
     st.write(f"### You selected: {selected_model}")
-

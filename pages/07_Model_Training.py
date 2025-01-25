@@ -178,15 +178,18 @@ with col2:
     st.info(f"Predicted Price (Ridge): ₹{ridge_pred_input:,.2f}")
     st.warning(f"Predicted Price (Linear): ₹{linear_pred_input:,.2f}")
 
+
 # Model performance metrics
 st.header("\U0001F4CA Model Performance")
 col3, col4 = st.columns(2)
 with col3:
     st.metric("Lasso Regression MSE", f"{lasso_mse:.2f}")
     st.metric("Ridge Regression MSE", f"{ridge_mse:.2f}")
+    st.metric("Linear Regression MSE", f"{linear_mse:.2f}")
 with col4:
     st.metric("Training Samples", f"{len(X_train)}")
     st.metric("Test Samples", f"{len(X_test)}")
+
 
 # Visualization: Kms Driven vs. Price with Predictions Highlighted
 st.header("\U0001F4C8 Data Insights")
