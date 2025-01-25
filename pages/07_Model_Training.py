@@ -208,7 +208,7 @@ sns.scatterplot(
 ax.scatter(
     [kms_driven],           # Example kms_driven value
     [lasso_pred_input],     # Lasso prediction for the specific input
-    color="red",
+    color="yellow",
     s=50,
     label="Lasso Predicted Price"
 )
@@ -222,7 +222,7 @@ ax.scatter(
 ax.scatter(
     [kms_driven],           # Example kms_driven value
     [linear_pred_input],     # Ridge prediction for the specific input
-    color="yellow",
+    color="red",
     s=50,
     label="Linear Predicted Price"
 )
