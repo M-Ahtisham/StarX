@@ -1,4 +1,6 @@
 import streamlit as st
+import pickle
+
 
 class Chatbot:
     def __init__(self):
@@ -109,21 +111,31 @@ class Chatbot:
         self.add_to_history("Bot", response)
         return response
 
-    # Imaginary function to process the car data
-    def process_car_purchase(self, kms_driven, owners, year):
-        # This is a placeholder function for processing car purchases
-        return f"Processing your purchase request for a car with {kms_driven} Kms driven, {owners} owners, and year {year}."
 
 
-import streamlit as st
+    def load_model():
+        model_path = 'models/linear_model.pkl'
+        with open(model_path, 'rb') as model_file:
+            model = pickle.load(model_file)
+        return model
 
-# Chat history dictionary (example data)
-chat_history = {
-    "1. You": "hallo",
-    "2. Bot": "Hallo!, Wie kann ich Ihnen helfen",
-    "3. You": "hiads",
-    "4. Bot": "Hello! What can I do for you?"
-}
+    # Function to process car purchase and predict price
+    def process_car_purchase(kms_driven, owners, year, location=2, fuel_type=1, company=3):
+        # Load the model from the saved .pkl file
+        model = load_model()
+        
+        # Prepare the input data
+        input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]], 
+                                columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
+        
+        # Assuming the model requires one-hot encoding like the original training data
+        X = pd.get_dummies(input_data, drop_first=True).reindex(columns=model.feature_names_in_, fill_value=0)
+        
+        # Predict the price using the loaded model
+        predicted_price = model.predict(X)[0]
+
+        return f"This car will cost {predicted_price}, Your order has been sent!"
+
 
 # Streamlit App
 st.title("Chatbot for StarX")

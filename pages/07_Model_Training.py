@@ -5,6 +5,8 @@ from sklearn.linear_model import Lasso, Ridge, LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
+import pickle
+import os
 
 # Apply the style on every page
 st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
@@ -98,13 +100,22 @@ with col1:
     st.write(f"- **Kms Driven:** {kms_driven}")
     st.write(f"- **Owner Type:** {owner_label}")
 
+st.write("### Test-Training data")
+test_train_split = st.slider(
+    "Select the percentage of test data",
+    min_value=10,
+    max_value=50,
+    value=20,  # Default value
+    step=1,
+    format="%d%%"
+)
 
 # Prepare data for prediction
 X = pd.get_dummies(df_processed[["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"]], drop_first=True)
 y = df_processed["Price"]
 
 # Train-test split (60% train, 40% test)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_train_split/100, random_state=42)
 
 # Reindex the input data to match columns in X
 input_data = pd.DataFrame([[location, kms_driven, fuel_type, owner, year, company]], 
@@ -131,6 +142,33 @@ linear_model.fit(X_train, y_train)
 linear_pred = linear_model.predict(X_test)
 linear_mse = mean_squared_error(y_test, linear_pred)
 linear_pred_input = linear_model.predict(input_data)[0]
+
+# Save the trained linear model to the 'models/' directory
+models_directory = 'models'
+if not os.path.exists(models_directory):
+    os.makedirs(models_directory)  # Create 'models/' directory if it doesn't exist
+
+# Save the model
+model_path = os.path.join(models_directory, 'linear_model.pkl')
+with open(model_path, 'wb') as model_file:
+    pickle.dump(linear_model, model_file)
+
+# def predict_price(kms_driven, year, owner):
+#     # Prepare the input data
+#     fuel_type = 2
+#     company = 3
+#     input_data = pd.DataFrame([[location, kms_driven, fuel_type, owner, year, company]], 
+#                               columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
+    
+#     # Reindex the input data to match columns in X
+#     input_data = pd.get_dummies(input_data, drop_first=True).reindex(columns=X.columns, fill_value=0)
+    
+#     # Predict the price using the trained linear model
+#     price_prediction = linear_model.predict(input_data)[0]
+    
+#     return price_prediction
+
+# st.session_state.predict_price_function = predict_price
 
 
 # Display predictions
