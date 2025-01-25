@@ -28,10 +28,10 @@ df_transformed['Label'] = df_transformed['Label'].map(label_to_num)
 # Tranforming the Locations column
 location_to_num = {
     "Pune": 1,
-    "Chennai": 1,
-    "Bangalore": 1,
-    "Kolkata": 6,
-    "Mumbai": 6,
+    "Chennai": 2,
+    "Bangalore": 3,
+    "Kolkata": 4,
+    "Mumbai": 5,
     "Madurai": 6,
     "Hyderabad": 7,
     "Jaipur": 8,
@@ -65,10 +65,11 @@ location_to_num = {
     "Kanchipuram": 36,
     "Coimbatore": 37,
     "Faridabad": 38,
-    "Jagdalpur": 40
+    "Jagdalpur": 39
 }
+
 df_transformed['Location'] = df_transformed['Location'].map(location_to_num)
-df_transformed['Location'].fillna(40, inplace=True)  # The None values are replaced by 0
+df_transformed['Location'].fillna(40, inplace=True)  # The None values are replaced by 40
 
 
 # Transforming the Price Column
@@ -153,10 +154,12 @@ st.write(df_transformed.dtypes)
 st.markdown("### Graph of Years against Kms_Driven")
 st.plotly_chart(px.scatter(df_transformed, x ='Year', y='Kms_driven'))
 st.write("The scatter plot indicates a clear trend where older cars tend to have higher kilometers driven, while newer models generally exhibit lower mileage.")
+st.write("We can also notice some outliers, most notably is the car with 690,000Kms driven.")
 
 st.markdown("### Graph of Years against Price")
 st.plotly_chart(px.scatter(df_transformed, x ='Year', y='Price'))
-# This part will be moved to the data Preprocessing
+st.write("The scatter plot indicates a clear trend where newer cars are more expensive then older cars.")
+st.write("We can also notice an outlier, most notable one is the car with a price of 7,500,000 INR. These are removed in the net page.")
 
 st.session_state["df_transformed"] = df_transformed
 

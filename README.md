@@ -181,4 +181,4 @@ ones), or other._
 
 
 # Work done
-It must describe, who has implemented which request and at  which time
+It must describe, who has implemented which request.

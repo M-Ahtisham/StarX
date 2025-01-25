@@ -98,6 +98,7 @@ with col1:
     st.write(f"- **Kms Driven:** {kms_driven}")
     st.write(f"- **Owner Type:** {owner_label}")
 
+
 # Prepare data for prediction
 X = pd.get_dummies(df_processed[["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"]], drop_first=True)
 y = df_processed["Price"]
@@ -131,12 +132,6 @@ linear_pred = linear_model.predict(X_test)
 linear_mse = mean_squared_error(y_test, linear_pred)
 linear_pred_input = linear_model.predict(input_data)[0]
 
-# Linear Regression
-linear_model = LinearRegression()
-linear_model.fit(X_train, y_train)
-linear_pred = linear_model.predict(X_test)
-linear_mse = mean_squared_error(y_test, linear_pred)
-linear_pred_input = linear_model.predict(input_data)[0]
 
 # Display predictions
 with col2:

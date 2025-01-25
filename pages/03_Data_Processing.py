@@ -1,7 +1,5 @@
 import streamlit as st
 import plotly.express as px
-import pandas as pd
-import seaborn as sns
 
 # Apply the style on every page
 st.markdown(st.session_state["custom_style"], unsafe_allow_html=True)
@@ -41,4 +39,5 @@ cols[1].write("###### Processed data with outliers removed")
 cols[1].markdown("### Processed Data metrics")
 cols[1].dataframe(df_processed.describe())
 
+st.write("In total, 32 outliers were removed. Removal of these rows had little impact on the mean, but more impact on the Max values of the Kms_driven and Price")
 st.session_state["df_processed"] = df_processed

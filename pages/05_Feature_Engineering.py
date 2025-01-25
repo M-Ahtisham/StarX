@@ -82,5 +82,6 @@ if scaling_option != "None":
     st.write(f"- Applied scaling: {scaling_option}")
 if st.session_state.get("drop_col"):
     st.write(f"- Dropped columns: {', '.join(st.session_state['drop_col'])}")
+    
 
-
+st.session_state.df_engineered = df_engineered
