@@ -13,8 +13,9 @@ StarX is a data-driven application designed to analyze and provide clear insight
 
 # Project Installation and Running
 
-Follow these steps to set up and run the StarX application. Make sure to have the correct versions of Python and Streamlit installed.
+Follow these steps to set up and run the StarX application. Make sure to have the correct versions of Python and Streamlit installed. We assume you have git installed already.
 
+- It is recommended to use a bash shell or Linux shell for the project.
 
 1. Clone the repository:  
    `git clone https://mygit.th-deg.de/mb04502/StarX`
@@ -22,10 +23,11 @@ Follow these steps to set up and run the StarX application. Make sure to have th
 2. Navigate to the project folder:  
    `cd starx`
 
-3. Create a virtual environment:
+3. Create a virtual environment
+
    - On Windows:
       `python -m venv .venv`
-   - On macOS/Linux:
+   - On macOS/Linux: 
       `python3 -m venv .venv`
 
 4. Activate the virtual environment:  
@@ -170,7 +172,7 @@ ones), or other._
 
 
 19. _Create at least 3 sample dialogs for each use case you select for the chatbot. Document them in the Wiki._
-      - ❌
+      - Three sample dialogs were added for each use case. This can be found under the section of  ChatBot Dialog Flow in the Wiki.
 
 20. _Create a high-level (dialog) flow for the use cases. Also document it in the Wiki._
       - High level dialog flow was made and has been described in the wiki under the [ChatBot Dialog Flow](https://mygit.th-deg.de/mb04502/StarX/-/wikis/6.-ChatBot-Dialog-Flow). It shows dialog flow for 2 use cases.
@@ -179,32 +181,31 @@ ones), or other._
       - An alternative for rasa is used, it performs the same tasks but with less compatibility issues. The Chatbot was implemented by keyword spotting techniques and implements 2 of the use cases.
 
 22. _Create a video/screencast of your project. The video must show at least 3 use cases, one of them with the rasa chatbot. The video must be uploaded to the MyGit repository._
-      - ❌
+      - A video of the project has been recorded and the link to the video has been added in the Wiki in the home page.
 
 
 # Work done
-
 | Request Number | By Both   | Muhammad Ahtisham Bhatti | Love |
 |----------------|-----------|--------------------------|------|
-| 1              |    ✔      |                          |      |
-| 2              |    ✔      |                          |      |
-| 3              |           |          ✔               |      |
-| 4              |           |          ✔               |      |
-| 5              |           |          ✔               |      |
+| 1              |     ✔     |                          |      |
+| 2              |     ✔     |                          |      |
+| 3              |           |             ✔            |      |
+| 4              |           |             ✔            |      |
+| 5              |           |             ✔            |      |
 | 6              |           |                          |  ✔   |
 | 7              |           |                          |  ✔   |
-| 8              |     ✔     |                          |      |
-| 9              |     ✔     |                          |      |
-| 10             |     ✔     |                          |      |
-| 11             |     ✔     |                          |      |
-| 12             |           |           ✔              |      |
+| 8              |           |             ✔            |      |
+| 9              |           |                          |  ✔   |
+| 10             |           |             ✔            |      |
+| 11             |           |                          |  ✔   |
+| 12             |           |             ✔            |      |
 | 13             |           |                          |  ✔   |
 | 14             |           |                          |  ✔   |
-| 15             |           |           ✔              |      |
+| 15             |           |             ✔            |      |
 | 16             |           |                          |  ✔   |
-| 17             |    ✔      |                          |      |
-| 18             |           |           ✔              |      |
+| 17             |     ✔     |                          |      |
+| 18             |           |             ✔            |      |
 | 19             |           |                          |  ✔   |
 | 20             |           |                          |  ✔   |
 | 21             |           |             ✔            |      |
-| 22             |    ✔      |                          |      |
+| 22             |     ✔     |                          |      |
