@@ -2,8 +2,11 @@ import streamlit as st
 import pandas as pd
 
 
+
 st.title("StarX")
 st.image("imgs/star_x.webp")
+
+
 
 st.markdown("""
 This app provides insights into car prices in India based on a dataset containing details like location, year, kilometers driven, fuel type, and ownership.
@@ -40,8 +43,6 @@ st.write("- Filters to customize data views.")
 # Placeholder for data loading section
 st.markdown("## Data Acquisition")
 st.write("'Data acquisition', i.e., loading the dataset, will be implemented in this script.")
-
-st.sidebar.success("Select the menu points from top to bottom in order to use the ML pipeline.")
 
 # Load the CSV file into a DataFrame
 file_path = 'data/Quikr_car.csv' 
@@ -93,6 +94,7 @@ CUSTOM_STYLE = """
             border-color: var(--primary-color); /* Border matches primary color */
         }
     }
+    
     </style>
     """
 
