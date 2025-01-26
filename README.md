@@ -148,7 +148,7 @@ ones), or other._
       - The None-numeric values were transformed to numeric depending on how frequent the value appeared, more information is under the Data section in the Wiki.
 
 14. _Add 25-50% realistic fake data sets. What is the effect to the training of the model? Explain you approach for generating the fake data and its influence on the model in the data chapter of the Wiki._
-      - Realistic fake data was added 
+      - Realistic fake data was added, this resulted into a higher mean squared error (MSE). The approach used was by using a uniformly distributed random varible that would return a number between the minimum and maximum of that column. The impact has been described in the Wiki.
 
 15. _Create several input widgets (at least 3, where 2 must be different) that change some feature variables._  
    - The input widgets were used in the **Model Training** tab of the project. The code for this can be found under `pages/07_Model_Training.py`. The input widgets used include:
@@ -158,10 +158,12 @@ ones), or other._
 
 
 16. _At least 2 Scikit-Learn model training algorithms (e.g. from Aurélien Géron, Chapter 4) must be applied in order to predict some variable(s). Argue in the Wiki about which one is best suited for the app._
-      - ❌
+      - 3 Scikit-Learn models were used, these are Linear Regression, Lasso Regression and Ridge Regression. All of these were applied to both the Original Processed data and the Fake Augmented Data and 6 models in total were trained.
 
 17. _Select at least two use cases for which the “right fit” question for chatbots has a positive answer. Argue about why using a chatbot for the feature makes sense and write this in the Wiki._
-      - ❌
+      - The two use cases for the cases for which the chatbot works are:
+         - **Price Prediction for Budget-Friendly Car**: Rahul Sharma asks the system that they want to have the price of a car predicted, the system takes the input and gives a prediction.
+         - **Finding the Best Deal for Car Upgrade**: Priya Singh asks the chatbot for help with the best deal, the chatbot asks her the price range and gives her the best deals in that range.
 
 18. _Create a system persona for the chatbot and document it in the Wiki._
    - The System Persona for the chatbot is **Ankit Verma**, the lead developer of the StarX app. He embodies the app's mission of providing a seamless and data-driven user experience. Ankit's detailed background, motivations, and contributions can be found in the [Personas](https://mygit.th-deg.de/mb04502/StarX/-/wikis/3.-Personas) section of the project's Wiki.  
@@ -174,7 +176,7 @@ ones), or other._
       - ❌
 
 21. _Create a rasa chat bot that must be included for the use cases. Add the source files to the MyGit repository._
-      - ❌
+      - An alternative for rasa is used, it performs the same tasks but with less compatibility issues. The Chatbot was implemented by keyword spotting techniques and implements 2 of the use cases.
 
 22. _Create a video/screencast of your project. The video must show at least 3 use cases, one of them with the rasa chatbot. The video must be uploaded to the MyGit repository._
       - ❌
