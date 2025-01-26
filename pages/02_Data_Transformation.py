@@ -146,7 +146,7 @@ st.write(df_transformed.describe())
 
 st.markdown("## Correlations of features")
 st.dataframe(df_transformed.corr().style.background_gradient(cmap='RdYlGn', axis=None)) # The styling was added using seaborn
-
+st.write("This heatmap highlights significant relationships, such as the strong negative correlation between Label and Owner (-0.784) and the positive correlation between Price and Year (0.382). These insights reveal key factors influencing car pricing and classification trends.")
 
 st.write("## Data types")
 st.write(df_transformed.dtypes)
