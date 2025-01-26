@@ -92,10 +92,11 @@ else:
 
     st.altair_chart(chart)
 
-    # Adding Final Selection Option
-    selected_model = st.selectbox(
-        "Select your preferred model based on the scores:",
-        options=['Ridge Regression', 'Lasso Regression', 'Linear Regression']
-    )
+   # Adding Final Selection Option
+selected_model = st.selectbox(
+    "Select your preferred model based on the scores:",
+    options=['Ridge Regression']  # Restricting to Ridge Regression only
+)
 
-    st.write(f"### You selected: {selected_model}")
+st.write(f"### You selected: {selected_model}")
+
