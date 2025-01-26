@@ -148,7 +148,7 @@ ones), or other._
       - The None-numeric values were transformed to numeric depending on how frequent the value appeared, more information is under the Data section in the Wiki.
 
 14. _Add 25-50% realistic fake data sets. What is the effect to the training of the model? Explain you approach for generating the fake data and its influence on the model in the data chapter of the Wiki._
-      - ❌
+      - Realistic fake data was added 
 
 15. _Create several input widgets (at least 3, where 2 must be different) that change some feature variables._  
    - The input widgets were used in the **Model Training** tab of the project. The code for this can be found under `pages/07_Model_Training.py`. The input widgets used include:

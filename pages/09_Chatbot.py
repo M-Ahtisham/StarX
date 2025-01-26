@@ -201,17 +201,37 @@ class Chatbot:
     def process_car_purchase(self, kms_driven, owners, year, location=2, fuel_type=1, company=16):
         model = self.load_model()
         
-        # Prepare input data
-        input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]],
-                                columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
-
-        # One-hot encode the input data and ensure it matches the model's feature names
-        X = pd.get_dummies(input_data, drop_first=True).reindex(columns=model.feature_names_in_, fill_value=0)
-
-        # Predict the price using the loaded model
-        predicted_price = model.predict(X)[0]
-
-        return f"The estimated price for this car is ₹{predicted_price:,.2f}. Your order has been sent!"
+        try:
+            # Convert inputs to appropriate types
+            kms_driven = int(kms_driven.replace(",", ""))  # Remove commas and convert to int
+            owners = int(owners)
+            year = int(year)
+            
+            # Validate input values
+            if kms_driven <= 0 or owners <= 0 or year < 1900 or year > 2025:
+                return "Invalid input values. Please provide realistic data."
+            
+            # Prepare input data
+            input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]],
+                                    columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
+            
+            # One-hot encode the input data and ensure it matches the model's feature names
+            X = pd.get_dummies(input_data, drop_first=True)
+            for col in model.feature_names_in_:
+                if col not in X.columns:
+                    X[col] = 0  # Add missing columns with default value
+            X = X[model.feature_names_in_]
+            
+            # Predict the price using the loaded model
+            predicted_price = model.predict(X)[0]
+            
+            # Sanity check for negative predictions
+            if predicted_price < 0:
+                return "The estimated price is invalid. Please verify your inputs or try again."
+            
+            return f"The estimated price for this car is ₹{predicted_price:,.2f}. Your order has been sent!"
+        except Exception as e:
+            return f"An error occurred during processing: {str(e)}"
 
 
 
@@ -325,49 +345,3 @@ with st.expander("**FAQs and Tips**"):
         - **Want to reset the chat?**: Use the "Start a New Chat" button above.
         """
     )
-
-
-
-
-
-
-
-
-
-
-
-
-##################
-st.header("Debugging")
-
-# Function to load the model
-def load_model():
-    model_path = 'models/linear_model.pkl'
-    with open(model_path, 'rb') as model_file:
-        model = pickle.load(model_file)
-    return model
-
-# Function to process car purchase and predict price
-def process_car_purchase(kms_driven, owners, year, location=2, fuel_type=1, company=16):
-    model = load_model()
-
-    # Prepare input data
-    input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]],
-                              columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
-
-    # One-hot encode the input data and ensure it matches the model's feature names
-    X = pd.get_dummies(input_data, drop_first=True).reindex(columns=model.feature_names_in_, fill_value=0)
-
-    # Predict the price using the loaded model
-    predicted_price = model.predict(X)[0]
-
-    return f"The estimated price for this car is ₹{predicted_price:,.2f}. Your order has been sent!"
-
-# Streamlit UI elements
-kms_driven = st.number_input("Enter Kms Driven", min_value=0, max_value=1000000, value=0)
-owners = st.number_input("Enter Number of Owners", min_value=1, max_value=5, value=1)
-year = st.number_input("Enter Car Year", min_value=2000, max_value=2025, value=2020)
-
-# Calculate Button
-if st.button("Calculate"):
-    st.write(process_car_purchase(kms_driven, owners, year))
