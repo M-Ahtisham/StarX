@@ -218,27 +218,27 @@ sns.scatterplot(
 )
 
 # Highlight the predicted price for Lasso and Ridge
-ax.scatter(
-    [kms_driven],           # Example kms_driven value
-    [lasso_pred_input],     # Lasso prediction for the specific input
-    color="yellow",
-    s=50,
-    label="Lasso Predicted Price"
-)
+# ax.scatter(
+#     [kms_driven],           # Example kms_driven value
+#     [lasso_pred_input],     # Lasso prediction for the specific input
+#     color="yellow",
+#     s=50,
+#     label="Lasso Predicted Price"
+# )
 ax.scatter(
     [kms_driven],           # Example kms_driven value
     [ridge_pred_input],     # Ridge prediction for the specific input
-    color="green",
-    s=50,
-    label="Ridge Predicted Price"
-)
-ax.scatter(
-    [kms_driven],           # Example kms_driven value
-    [linear_pred_input],     # Ridge prediction for the specific input
     color="red",
-    s=50,
-    label="Linear Predicted Price"
+    s=60,
+    # label="Ridge Predicted Price"
 )
+# ax.scatter(
+#     [kms_driven],           # Example kms_driven value
+#     [linear_pred_input],     # Ridge prediction for the specific input
+#     color="red",
+#     s=50,
+#     label="Linear Predicted Price"
+# )
 
 # Add labels and title
 ax.set_title("Kms Driven vs. Price (Test Data) with Predictions Highlighted")

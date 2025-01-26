@@ -175,7 +175,7 @@ with open(model_path, 'wb') as model_file:
 with col2:
     st.write("### Prediction Results")
     st.info(f"Predicted Price (Ridge): ₹{ridge_pred_input:,.2f}")
-    st.success(f" Ridge Regression MSE : {ridge_mse:.2f}, Ridge Regression has the lowest MSE, indicating it fits the data slightly better than Lasso and Linear Regression.")
+    st.success(f" Ridge Regression MSE : {ridge_mse:.2f}, the lowest MSE indicating it fits the data slightly better than other models.")
   
 
 # Model performance metrics
@@ -206,27 +206,27 @@ sns.scatterplot(
 )
 
 # Highlight the predicted price for Lasso and Ridge
-ax.scatter(
-    [kms_driven],           # Example kms_driven value
-    [lasso_pred_input],     # Lasso prediction for the specific input
-    color="yellow",
-    s=50,
-    label="Lasso Predicted Price"
-)
+# ax.scatter(
+#     [kms_driven],           # Example kms_driven value
+#     [lasso_pred_input],     # Lasso prediction for the specific input
+#     color="yellow",
+#     s=50,
+#     label="Lasso Predicted Price"
+# )
 ax.scatter(
     [kms_driven],           # Example kms_driven value
     [ridge_pred_input],     # Ridge prediction for the specific input
-    color="green",
-    s=50,
-    label="Ridge Predicted Price"
-)
-ax.scatter(
-    [kms_driven],           # Example kms_driven value
-    [linear_pred_input],     # Ridge prediction for the specific input
     color="red",
     s=50,
-    label="Linear Predicted Price"
+    # label="Ridge Predicted Price"
 )
+# ax.scatter(
+#     [kms_driven],           # Example kms_driven value
+#     [linear_pred_input],     # Ridge prediction for the specific input
+#     color="red",
+#     s=50,
+#     label="Linear Predicted Price"
+# )
 
 # Add labels and title
 ax.set_title("Kms Driven vs. Price (Test Data) with Predictions Highlighted")
