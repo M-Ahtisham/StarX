@@ -236,7 +236,7 @@ class Chatbot:
 
 
 # Streamlit App
-st.title("Chatbot for StarX")
+st.title(" 🏎️ Chatbot for StarX")
 
 # Instantiate Chatbot
 if "bot" not in st.session_state:
