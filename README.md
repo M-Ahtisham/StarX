@@ -81,14 +81,12 @@ Fake rows were added using random values within the original data's min and max 
 
 # Basic Usage
 To start the project, first ensure that all the required dependencies are installed. You can do this by running the following command:
-   
 
    `pip install -r requirements.txt`
 
 Once the environment is set up, you can run the project using the following command:
 
    `streamlit run main.py`
-
 
    
 ## Key Use Cases
@@ -103,7 +101,6 @@ StarX implements the requests as follows
 
 1. _A multi-page Web App with Streamlit (https://streamlit.io) has to be developed._
    - StarX consists of 9 pages, all pages have to be run in the correct order since they depend on the actions from the previous page
-
 
 2. _For source code and documentation, a MyGit repository and Wiki has to be used._
    - MyGit repository and Wiki have been used, see links at the top of this README file.
@@ -157,7 +154,6 @@ ones), or other._
      - **Slider**: Allows users to set a range of values for Years and Kms_Driven features.  
      - **Selectbox**: Provides a dropdown menu to select from predefined categories. This was used for Location and Company variables.  
      - **Radio Buttons**: Enables selection of a single option from a set of choices. This was used for Fuel Type variable.
-
 
 16. _At least 2 Scikit-Learn model training algorithms (e.g. from Aurélien Géron, Chapter 4) must be applied in order to predict some variable(s). Argue in the Wiki about which one is best suited for the app._
       - 3 Scikit-Learn models were used, these are Linear Regression, Lasso Regression and Ridge Regression. All of these were applied to both the Original Processed data and the Fake Augmented Data and 6 models in total were trained.
