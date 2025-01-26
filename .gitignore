@@ -8,6 +8,8 @@ env.bak/
 venv.bak/
 
 .git
+.DS_Store
+
 
 data/preprocessed.csv
 
