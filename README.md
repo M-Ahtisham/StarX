@@ -173,7 +173,7 @@ ones), or other._
       - ❌
 
 20. _Create a high-level (dialog) flow for the use cases. Also document it in the Wiki._
-      - ❌
+      - High level dialog flow was made and has been described in the wiki under the [ChatBot Dialog Flow](https://mygit.th-deg.de/mb04502/StarX/-/wikis/6.-ChatBot-Dialog-Flow). It shows dialog flow for 2 use cases.
 
 21. _Create a rasa chat bot that must be included for the use cases. Add the source files to the MyGit repository._
       - An alternative for rasa is used, it performs the same tasks but with less compatibility issues. The Chatbot was implemented by keyword spotting techniques and implements 2 of the use cases.

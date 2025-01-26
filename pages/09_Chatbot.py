@@ -11,7 +11,7 @@ if os.path.exists(model_path):
     class Chatbot:
         def __init__(self):
             self.state = "default"
-            self.chat_history = {}  # Stores chat history
+            self.chat_history = {"1.Bot": "Hello! Welcome to StarX Chatbot.\nHow can i help you today?"}  # Stores chat history
             self.message_counter = 1
             self.responses = {
                 "default": {
