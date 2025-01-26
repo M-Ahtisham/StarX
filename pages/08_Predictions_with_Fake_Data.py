@@ -198,8 +198,9 @@ with col3:
     st.metric("Ridge Regression MSE", f"{ridge_mse:.2f}")
     st.metric("Linear Regression MSE", f"{linear_mse:.2f}")
 with col4:
-    st.warning(f" Ridge Regression MSE : {ridge_mse:.2f}, Ridge Regression has the lowest MSE, indicating it fits the data slightly better than Lasso and Linear Regression.")
+    st.warning(f" Linear Regression MSE : {linear_mse:.2f}, After adding fake data Ridge Regression has the lowest MSE ,  indicating it fits the data.")
 
+    
     st.metric("Training Samples", f"{len(X_train)}")
     st.metric("Test Samples", f"{len(X_test)}")
     

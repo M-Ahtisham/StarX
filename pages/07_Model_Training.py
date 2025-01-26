@@ -175,7 +175,9 @@ with open(model_path, 'wb') as model_file:
 with col2:
     st.write("### Prediction Results")
     st.info(f"Predicted Price (Ridge): ₹{ridge_pred_input:,.2f}")
-    st.success(f" Ridge Regression MSE : {ridge_mse:.2f}, the lowest MSE indicating it fits the data slightly better than other models.")
+    st.success(f"Predicted Price (Linear): ₹{linear_pred_input:,.2f}")
+    st.warning(f"Predicted Price (Lasso): ₹{lasso_pred_input:,.2f}")
+   
   
 
 # Model performance metrics
@@ -190,6 +192,8 @@ with col3:
 with col4:
     st.metric("Training Samples", f"{len(X_train)}")
     st.metric("Test Samples", f"{len(X_test)}")
+
+    st.info(f" Ridge Regression MSE : {ridge_mse:.2f}, The lowest MSE indicating it fits the data slightly better than other two models.")
 
 
 # Visualization: Kms Driven vs. Price with Predictions Highlighted
