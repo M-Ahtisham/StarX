@@ -153,6 +153,7 @@ st.write(df_transformed.dtypes)
 
 st.markdown("### Graph of Years against Kms_Driven")
 st.plotly_chart(px.scatter(df_transformed, x ='Year', y='Kms_driven'))
+st.write("This scatter plot shows the relationship between years and kilometers driven, with outliers removed, revealing a clearer trend of decreasing kilometers for newer cars.")
 st.write("The scatter plot indicates a clear trend where older cars tend to have higher kilometers driven, while newer models generally exhibit lower mileage.")
 st.write("We can also notice some outliers, most notably is the car with 690,000Kms driven.")
 

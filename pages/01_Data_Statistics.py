@@ -21,6 +21,7 @@ label_counts = df_original['Label'].value_counts().reset_index()
 label_counts.columns = ['Label', 'Count']  # Rename columns for clarity
 fig_1 = px.bar(label_counts, x='Label', y='Count', title='Count of Labels', text='Count')
 st.plotly_chart(fig_1)
+st.write("The distribution of labels, where the PLATINUM category has a significantly higher count (688) compared to the GOLD category (344). It highlights a nearly 2:1 ratio in favor of the PLATINUM label.")
 
 st.markdown("### Location column overview")
 label_counts = df_original['Location'].value_counts().reset_index()
@@ -56,6 +57,7 @@ label_counts = df_original['Company'].value_counts().reset_index()
 label_counts.columns = ['Company', 'Count']  # Rename columns for clarity
 fig_6 = px.bar(label_counts, x='Company', y='Count', title='Count of Cars by Company', text='Count')
 st.plotly_chart(fig_6)
+st.write("Maruti has the highest number of cars (384), followed by Hyundai (228), and others. The data reflects the distribution of cars across various companies, with a sharp decline in counts after the top few brands.")
 
 
 # Store the original dataframe in the session state
