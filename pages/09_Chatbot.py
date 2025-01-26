@@ -67,17 +67,24 @@ class Chatbot:
                 "next_step": None  # End state
             }
         }
+        
+        ## This is a shortlisted dataset containing the best deals for every price range
         self.car_data = [
-            {"name": "\n • Ford Ikon - 2009, 73,000 Kms driven, Price 59,000INR at Chennai", "price": 59000},
-            {"name": "\n • Ford Ikon - 2008, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
-            {"name": "\n • Maruti Suzuki Alto - 2001, 85,000 Kms driven, Price 79,000INR at Chennai", "price": 79000},
-            {"name": "\n • Tata Nano - 2011, 37,000 Kms driven, Price 89,000INR at Chennai", "price": 89000},
-            {"name": "\n • Tata Indica - 2011, 67,000 Kms driven, Price 89,000INR at Chennai", "price": 89000},
-            {"name": "\n • Hyundai Santro Xing - 2004, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
-            {"name": "\n • Maruti Suzuki Wagon R - 2007, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
-            {"name": "\n • Maruti Suzuki 800 - 2000, 85,000 Kms driven, Price 69,000INR at Chennai", "price": 69000},
-            {"name": "\n • Hyundai Getz - 2006, 73,000 Kms driven, Price 1,19,000INR at Chennai", "price": 119000},
-            {"name": "\n • Chevrolet Aveo - 2007, 63,000 Kms driven, Price 67,000INR at Chennai", "price": 67000}
+            {"name": "\n • Maruti Suzuki Maruti 800 Std BSII - 2005, 1,08,252 Kms driven, Price 65,000INR at Chennai", "price": 65000},
+            {"name": "\n • Chevrolet Beat LT Petrol - 2010, 55,000 Kms driven, Price 1,75,000INR at Bangalore", "price": 175000},
+            {"name": "\n • Toyota Corolla H5 1.8E - 2006, 80,000 Kms driven, Price 1,70,000INR at Chennai", "price": 170000},
+            {"name": "\n • Ford Figo 1.5 TITANIUM - 2010, 88,000 Kms driven, Price 1,76,000INR at Chennai", "price": 176000},
+            {"name": "\n • Hyundai Eon Era Plus - 2014, 65,308 Kms driven, Price 2,77,599INR at Chennai", "price": 277599},
+            {"name": "\n • Hyundai Elite i20 1.2 ASTA O CVT - 2019, 37,522 Kms driven, Price 8,25,299INR at Chennai", "price": 825299},
+            {"name": "\n • Hyundai Venue S MT Turbo GDI 1.0L - 2019, 1,954 Kms driven, Price 8,55,299INR at Chennai", "price": 855299},
+            {"name": "\n • Maruti Suzuki Vitara Brezza VDi - 2019, 29,110 Kms driven, Price 8,38,699INR at Pune", "price": 838699},
+            {"name": "\n • Tata Hexa XM 4x2 7 STR - 2018, 60,000 Kms driven, Price 12,00,000INR at Madurai", "price": 1200000},
+            {"name": "\n • Maruti Suzuki Ciaz ZDi Plus SHVS RS - 2015, 12,500 Kms driven, Price 7,40,000INR at Chennai", "price": 740000},
+            {"name": "\n • Audi Q7 35 TDI Premium Plus Sunroof - 2017, 65,000 Kms driven, Price 22,50,000INR at Chennai", "price": 2250000},
+            {"name": "\n • Jaguar XF 2.2 Diesel Luxury - 2014, 20,000 Kms driven, Price 21,50,000INR at Mumbai", "price": 2150000},
+            {"name": "\n • BMW 3 Series 320d Luxury Line - 2015, 61,000 Kms driven, Price 18,90,000INR at Mumbai", "price": 1890000},
+            {"name": "\n • Kia Seltos GTX Plus 1.4 - 2020, 19,500 Kms driven, Price 18,31,000INR at Bangalore", "price": 1831000},
+            {"name": "\n • Hyundai Creta - 2020, 14,506 Kms driven, Price 18,04,399INR at Pune", "price": 1804399}
         ]
         self.price_ranges = [
             (0, 10000),
@@ -127,11 +134,11 @@ class Chatbot:
                     matching_cars = self.get_matching_cars(min_price, max_price)
                     if matching_cars:
                         car_names = [car['name'] for car in matching_cars]
-                        response = f"Here are some cars in your price range: {', '.join(car_names)}."
+                        response = f"Here are some best deals in your price range: {', '.join(car_names)}."
+                        self.set_state("default")  # Reset state after processing
                     else:
-                        response = "Sorry, no cars match your price range."
+                        response = "Sorry, no cars match your price range. Maybe try a different price range?"
                     self.add_to_history("Bot", response)
-                    self.set_state("default")  # Reset state after processing
                 else:
                     response = "Please provide a valid price range (e.g., 0-10000)."
             except Exception as e:
@@ -184,7 +191,6 @@ class Chatbot:
         return [car for car in self.car_data if min_price <= car["price"] <= max_price]
 
 
-
     def load_model(self):
         model_path = 'models/linear_model.pkl'
         with open(model_path, 'rb') as model_file:
@@ -192,21 +198,21 @@ class Chatbot:
         return model
 
     # Function to process car purchase and predict price
-    def process_car_purchase(self,kms_driven, owners, year, location=2, fuel_type=1, company=3):
-        # Load the model from the saved .pkl file
+    def process_car_purchase(self, kms_driven, owners, year, location=2, fuel_type=1, company=16):
         model = self.load_model()
         
-        # Prepare the input data
-        input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]], 
+        # Prepare input data
+        input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]],
                                 columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
-        
-        # Assuming the model requires one-hot encoding like the original training data
+
+        # One-hot encode the input data and ensure it matches the model's feature names
         X = pd.get_dummies(input_data, drop_first=True).reindex(columns=model.feature_names_in_, fill_value=0)
-        
+
         # Predict the price using the loaded model
         predicted_price = model.predict(X)[0]
 
-        return f"This car will cost {predicted_price}, Your order has been sent!"
+        return f"The estimated price for this car is ₹{predicted_price:,.2f}. Your order has been sent!"
+
 
 
 # Streamlit App
@@ -319,3 +325,49 @@ with st.expander("**FAQs and Tips**"):
         - **Want to reset the chat?**: Use the "Start a New Chat" button above.
         """
     )
+
+
+
+
+
+
+
+
+
+
+
+
+##################
+st.header("Debugging")
+
+# Function to load the model
+def load_model():
+    model_path = 'models/linear_model.pkl'
+    with open(model_path, 'rb') as model_file:
+        model = pickle.load(model_file)
+    return model
+
+# Function to process car purchase and predict price
+def process_car_purchase(kms_driven, owners, year, location=2, fuel_type=1, company=16):
+    model = load_model()
+
+    # Prepare input data
+    input_data = pd.DataFrame([[location, kms_driven, fuel_type, owners, year, company]],
+                              columns=["Location", "Kms_driven", "Fuel_type", "Owner", "Year", "Company"])
+
+    # One-hot encode the input data and ensure it matches the model's feature names
+    X = pd.get_dummies(input_data, drop_first=True).reindex(columns=model.feature_names_in_, fill_value=0)
+
+    # Predict the price using the loaded model
+    predicted_price = model.predict(X)[0]
+
+    return f"The estimated price for this car is ₹{predicted_price:,.2f}. Your order has been sent!"
+
+# Streamlit UI elements
+kms_driven = st.number_input("Enter Kms Driven", min_value=0, max_value=1000000, value=0)
+owners = st.number_input("Enter Number of Owners", min_value=1, max_value=5, value=1)
+year = st.number_input("Enter Car Year", min_value=2000, max_value=2025, value=2020)
+
+# Calculate Button
+if st.button("Calculate"):
+    st.write(process_car_purchase(kms_driven, owners, year))

@@ -117,8 +117,8 @@ df_augmented['Company_label'] = df_augmented['Company'].map(reverse_company_mapp
 st.sidebar.header("Input Features")
 year = st.sidebar.slider("Year", int(df_augmented["Year"].min()), int(df_augmented["Year"].max()), 2017)
 location = st.sidebar.selectbox("Location", sorted(df_augmented["Location"].unique()))
-company_label = st.sidebar.selectbox("Company", sorted(company_mapping.keys()))
-fuel_type_label = st.sidebar.radio("Fuel Type", sorted(fuel_type_mapping.values()), index=0)
+company_label = st.sidebar.selectbox("Company", list(company_mapping.keys()))
+fuel_type_label = st.sidebar.radio("Fuel Type", list(fuel_type_mapping.values()), index=0)
 kms_driven = st.sidebar.slider("Kms Driven", int(df_augmented["Kms_driven"].min()), int(df_augmented["Kms_driven"].max()), 40000)
 owner_label = st.sidebar.radio("Owner Type", sorted(owner_mapping.keys()), index=0)
 

@@ -78,8 +78,8 @@ st.write("This application predicts car prices based on various factors and prov
 st.sidebar.header("Input Features")
 year = st.sidebar.slider("Year", int(df_processed["Year"].min()), int(df_processed["Year"].max()), 2017)
 location = st.sidebar.selectbox("Location", sorted(df_processed["Location"].unique()))
-company_label = st.sidebar.selectbox("Company", sorted(company_mapping.keys()))
-fuel_type_label = st.sidebar.radio("Fuel Type", sorted(fuel_type_mapping.values()), index=0)
+company_label = st.sidebar.selectbox("Company", list(company_mapping.keys()))
+fuel_type_label = st.sidebar.radio("Fuel Type", list(fuel_type_mapping.values()), index=0)
 kms_driven = st.sidebar.slider("Kms Driven", int(df_processed["Kms_driven"].min()), int(df_processed["Kms_driven"].max()), 40000)
 owner_label = st.sidebar.radio("Owner Type", sorted(owner_mapping.keys()), index=0)
 
