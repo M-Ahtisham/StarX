@@ -22,9 +22,11 @@ st.dataframe(df_processed)
 
 st.markdown("### Graph of Years against Kms_Driven for Processed Data")
 st.plotly_chart(px.scatter(df_processed, x ='Year', y='Kms_driven'))
+st.write("This scatter plot shows the relationship between years and kilometers driven, with outliers removed, revealing a clearer trend of decreasing kilometers for newer cars.")
 
 st.markdown("### Graph of Years against Price for Processed Data")
 st.plotly_chart(px.scatter(df_processed, x ='Year', y='Price'))
+st.write("This scatter plot shows a positive trend, where newer cars tend to have higher prices, reflecting their increased value over time.")
 
 cols = st.columns(2)
 cols[0].markdown("## Transformed data")
