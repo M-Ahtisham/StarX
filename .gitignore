@@ -1,0 +1,20 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+.git
+.DS_Store
+
+
+data/preprocessed.csv
+
+# Pretrained models used for the chatbot
+models/ 
+
+# Files used for debugging only
+pages/10_Debugging.py
