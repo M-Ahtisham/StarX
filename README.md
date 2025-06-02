@@ -1,13 +1,3 @@
-Bhatti, Muhammad Ahtisham, 22301502
-
--, Love, 12306406
-
-**StarX** 
-
-[MyGit Repository](https://mygit.th-deg.de/mb04502/StarX)
-
-[Link to Wiki](https://mygit.th-deg.de/mb04502/StarX/-/wikis/home)
-
 # Project Description
 StarX is a data-driven application designed to analyze and provide clear insights into car prices in India. Using a detailed dataset covering a wide range of vehicles, it helps users understand pricing trends, identify key factors that influence car prices, and make informed decisions. The application also offers personalized pricing recommendations, ensuring users have the right information to evaluate and compare options effectively.
 
@@ -18,7 +8,7 @@ Follow these steps to set up and run the StarX application. Make sure to have th
 - It is recommended to use a bash shell or Linux shell for the project.
 
 1. Clone the repository:  
-   `git clone https://mygit.th-deg.de/mb04502/StarX`
+   `git clone https://github.com/M-Ahtisham/StarX/`
 
 2. Navigate to the project folder:  
    `cd starx`
